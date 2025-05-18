@@ -3,32 +3,24 @@
 @section('content')
 <div class="d-flex justify-content-between align-items-center mb-3">
     <h4>Daftar Produk</h4>
-    <a href="{{ route('products.create') }}" class="btn btn-primary">Tambah Produk</a>
+    <a href="{{ route('transactions.create') }}" class="btn btn-primary">Tambah Transaksi</a>
 </div>
 
 <table class="table table-bordered">
     <thead>
         <tr>
-            <th>Nama</th>
-            <th>SKU</th>
-            <th>Stok</th>
-            <th>Harga</th>
+            <th>Tanggal transaksi</th>
+            <th>Total</th>
             <th>Aksi</th>
         </tr>
     </thead>
     <tbody>
-        @foreach ($products as $product)
+        @foreach ($transactions as $transaction)
         <tr>
-            <td>{{ $product->name }}</td>
-            <td>{{ $product->sku }}</td>
-            <td>{{ $product->stock }}</td>
-            <td>Rp {{ number_format($product->price, 0, ',', '.') }}</td>
+            <td>{{ $transaction->t_date }}</td>
+            <td style="text-align: right">{{ $transaction->t_total }}</td>
             <td>
-                <a href="{{ route('products.edit', $product->id) }}" class="btn btn-sm btn-warning">Edit</a>
-                <form action="{{ route('products.destroy', $product->id) }}" method="POST" class="d-inline">
-                    @csrf @method('DELETE')
-                    <button class="btn btn-sm btn-danger" onclick="return confirm('Yakin hapus?')">Hapus</button>
-                </form>
+                <a href="{{ route('transactions.detail', ['id' => $transaction->id]) }}" class="btn btn-sm btn-warning">Detail</a>
             </td>
         </tr>
         @endforeach
