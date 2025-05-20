@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Route;
 // });
 
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\ReportController;
 
 Route::get('/', fn () => redirect()->route('dashboard'))->name('home');
 Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
@@ -28,4 +29,9 @@ Route::prefix('transactions')->group(function () {
     Route::get('create', [TransactionController::class, 'create'])->name('transactions.create');
     Route::post('store', [TransactionController::class, 'store'])->name('transactions.store');
     Route::get('detail', [TransactionController::class, 'detail'])->name('transactions.detail');
+});
+
+Route::prefix('reports')->group(function () {
+    Route::get('', [ReportController::class, 'index'])->name('reports.index');
+    // Route::get('print', [TransactionController::class, 'print'])->name('reports.print');
 });
