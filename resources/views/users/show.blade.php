@@ -29,7 +29,19 @@
                                     <td><strong>Role:</strong></td>
                                     <td>
                                         @if($user->role)
-                                            <span class="badge bg-info">{{ $user->role->name }}</span>
+                                            @if($user->role === 'admin')
+                                                <span class="badge bg-danger">
+                                                    <i class="fas fa-user-shield me-1"></i>Admin
+                                                </span>
+                                            @elseif($user->role === 'cashier')
+                                                <span class="badge bg-info">
+                                                    <i class="fas fa-cash-register me-1"></i>Cashier
+                                                </span>
+                                            @else
+                                                <span class="badge bg-secondary">
+                                                    <i class="fas fa-user me-1"></i>{{ ucfirst($user->role) }}
+                                                </span>
+                                            @endif
                                         @else
                                             <span class="badge bg-secondary">Tidak ada role</span>
                                         @endif
@@ -38,7 +50,23 @@
                                 <tr>
                                     <td><strong>Status:</strong></td>
                                     <td>
-                                        <span class="badge bg-success">Aktif</span>
+                                        <span class="badge bg-success">
+                                            <i class="fas fa-circle me-1"></i>Aktif
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Email Verified:</strong></td>
+                                    <td>
+                                        @if($user->email_verified_at)
+                                            <span class="badge bg-success">
+                                                <i class="fas fa-check-circle me-1"></i>Terverifikasi
+                                            </span>
+                                        @else
+                                            <span class="badge bg-warning">
+                                                <i class="fas fa-exclamation-circle me-1"></i>Belum verifikasi
+                                            </span>
+                                        @endif
                                     </td>
                                 </tr>
                                 <tr>
@@ -56,25 +84,70 @@
                             @if($user->role)
                                 <div class="card bg-light">
                                     <div class="card-body">
-                                        <h6>{{ $user->role->name }}</h6>
-                                        <p class="text-muted">{{ $user->role->description ?? 'Tidak ada deskripsi' }}</p>
+                                        <h6>
+                                            @if($user->role === 'admin')
+                                                <i class="fas fa-user-shield me-2"></i>Admin
+                                            @elseif($user->role === 'cashier')
+                                                <i class="fas fa-cash-register me-2"></i>Cashier
+                                            @else
+                                                <i class="fas fa-user me-2"></i>{{ ucfirst($user->role) }}
+                                            @endif
+                                        </h6>
+                                        <p class="text-muted">
+                                            @if($user->role === 'admin')
+                                                Administrator dengan akses penuh ke semua fitur sistem
+                                            @elseif($user->role === 'cashier')
+                                                Kasir dengan akses ke transaksi dan produk
+                                            @else
+                                                User dengan akses terbatas
+                                            @endif
+                                        </p>
                                         
-                                        @if($user->role->permissions && count($user->role->permissions) > 0)
-                                            <h6 class="mt-3">Permissions:</h6>
-                                            <div class="row">
-                                                @foreach($user->role->permissions as $permission)
-                                                    <div class="col-md-6 mb-1">
-                                                        <span class="badge bg-primary">{{ ucfirst($permission) }}</span>
-                                                    </div>
-                                                @endforeach
-                                            </div>
-                                        @else
-                                            <p class="text-muted">Tidak ada permissions</p>
-                                        @endif
+                                        <h6 class="mt-3">Permissions:</h6>
+                                        <div class="row">
+                                            @if($user->role === 'admin')
+                                                <div class="col-md-6 mb-1">
+                                                    <span class="badge bg-primary">Dashboard</span>
+                                                </div>
+                                                <div class="col-md-6 mb-1">
+                                                    <span class="badge bg-primary">Products</span>
+                                                </div>
+                                                <div class="col-md-6 mb-1">
+                                                    <span class="badge bg-primary">Transactions</span>
+                                                </div>
+                                                <div class="col-md-6 mb-1">
+                                                    <span class="badge bg-primary">Reports</span>
+                                                </div>
+                                                <div class="col-md-6 mb-1">
+                                                    <span class="badge bg-primary">Users</span>
+                                                </div>
+                                                <div class="col-md-6 mb-1">
+                                                    <span class="badge bg-primary">Settings</span>
+                                                </div>
+                                            @elseif($user->role === 'cashier')
+                                                <div class="col-md-6 mb-1">
+                                                    <span class="badge bg-primary">Dashboard</span>
+                                                </div>
+                                                <div class="col-md-6 mb-1">
+                                                    <span class="badge bg-primary">Products</span>
+                                                </div>
+                                                <div class="col-md-6 mb-1">
+                                                    <span class="badge bg-primary">Transactions</span>
+                                                </div>
+                                                <div class="col-md-6 mb-1">
+                                                    <span class="badge bg-primary">Reports</span>
+                                                </div>
+                                            @else
+                                                <div class="col-md-6 mb-1">
+                                                    <span class="badge bg-secondary">Dashboard</span>
+                                                </div>
+                                            @endif
+                                        </div>
                                     </div>
                                 </div>
                             @else
                                 <div class="alert alert-warning">
+                                    <i class="fas fa-exclamation-triangle me-2"></i>
                                     User ini belum memiliki role yang ditetapkan.
                                 </div>
                             @endif

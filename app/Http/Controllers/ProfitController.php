@@ -8,7 +8,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
-class ProfitController extends Controller
+class ProfitController extends BaseManageController
 {
     /**
      * Display profit dashboard
@@ -16,15 +16,21 @@ class ProfitController extends Controller
     public function index()
     {
         $today = Carbon::today();
+        $startOfDay = $today->copy()->startOfDay();
+        $endOfDay = $today->copy()->endOfDay();
+        
         $startOfWeek = Carbon::now()->startOfWeek();
+        $endOfWeek = Carbon::now()->endOfWeek();
         $startOfMonth = Carbon::now()->startOfMonth();
+        $endOfMonth = Carbon::now()->endOfMonth();
         $startOfYear = Carbon::now()->startOfYear();
+        $endOfYear = Carbon::now()->endOfYear();
 
         $data = [
-            'daily' => $this->calculateProfit($today, $today),
-            'weekly' => $this->calculateProfit($startOfWeek, Carbon::now()),
-            'monthly' => $this->calculateProfit($startOfMonth, Carbon::now()),
-            'yearly' => $this->calculateProfit($startOfYear, Carbon::now()),
+            'daily' => $this->calculateProfit($startOfDay, $endOfDay),
+            'weekly' => $this->calculateProfit($startOfWeek, $endOfWeek),
+            'monthly' => $this->calculateProfit($startOfMonth, $endOfMonth),
+            'yearly' => $this->calculateProfit($startOfYear, $endOfYear),
         ];
 
         return view('profits.index', compact('data'));
@@ -37,9 +43,11 @@ class ProfitController extends Controller
     {
         $date = $request->get('date', Carbon::today()->format('Y-m-d'));
         $selectedDate = Carbon::parse($date);
+        $startOfDay = $selectedDate->copy()->startOfDay();
+        $endOfDay = $selectedDate->copy()->endOfDay();
         
-        $profit = $this->calculateProfit($selectedDate, $selectedDate);
-        $transactions = $this->getTransactionsByDate($selectedDate, $selectedDate);
+        $profit = $this->calculateProfit($startOfDay, $endOfDay);
+        $transactions = $this->getTransactionsByDate($startOfDay, $endOfDay);
 
         return view('profits.daily', compact('profit', 'transactions', 'selectedDate'));
     }
@@ -50,8 +58,8 @@ class ProfitController extends Controller
     public function weekly(Request $request)
     {
         $weekStart = $request->get('week_start', Carbon::now()->startOfWeek()->format('Y-m-d'));
-        $startDate = Carbon::parse($weekStart);
-        $endDate = $startDate->copy()->endOfWeek();
+        $startDate = Carbon::parse($weekStart)->startOfDay();
+        $endDate = $startDate->copy()->endOfWeek()->endOfDay();
         
         $profit = $this->calculateProfit($startDate, $endDate);
         $transactions = $this->getTransactionsByDate($startDate, $endDate);
@@ -66,8 +74,8 @@ class ProfitController extends Controller
     public function monthly(Request $request)
     {
         $month = $request->get('month', Carbon::now()->format('Y-m'));
-        $startDate = Carbon::createFromFormat('Y-m', $month)->startOfMonth();
-        $endDate = $startDate->copy()->endOfMonth();
+        $startDate = Carbon::createFromFormat('Y-m', $month)->startOfMonth()->startOfDay();
+        $endDate = $startDate->copy()->endOfMonth()->endOfDay();
         
         $profit = $this->calculateProfit($startDate, $endDate);
         $transactions = $this->getTransactionsByDate($startDate, $endDate);
@@ -82,8 +90,8 @@ class ProfitController extends Controller
     public function yearly(Request $request)
     {
         $year = $request->get('year', Carbon::now()->year);
-        $startDate = Carbon::createFromDate($year, 1, 1)->startOfYear();
-        $endDate = $startDate->copy()->endOfYear();
+        $startDate = Carbon::createFromDate($year, 1, 1)->startOfYear()->startOfDay();
+        $endDate = $startDate->copy()->endOfYear()->endOfDay();
         
         $profit = $this->calculateProfit($startDate, $endDate);
         $transactions = $this->getTransactionsByDate($startDate, $endDate);
@@ -97,7 +105,7 @@ class ProfitController extends Controller
      */
     private function calculateProfit($startDate, $endDate)
     {
-        $transactions = Transaction::whereBetween('created_at', [$startDate, $endDate])
+        $transactions = Transaction::whereBetween('transaction_date', [$startDate, $endDate])
             ->where('status', Transaction::STATUS_PAID)
             ->with('items.product')
             ->get();
@@ -135,10 +143,10 @@ class ProfitController extends Controller
      */
     private function getTransactionsByDate($startDate, $endDate)
     {
-        return Transaction::whereBetween('created_at', [$startDate, $endDate])
+        return Transaction::whereBetween('transaction_date', [$startDate, $endDate])
             ->where('status', Transaction::STATUS_PAID)
             ->with(['items.product'])
-            ->orderBy('created_at', 'desc')
+            ->orderBy('transaction_date', 'desc')
             ->get();
     }
 
@@ -151,7 +159,9 @@ class ProfitController extends Controller
         $currentDate = $startDate->copy();
 
         while ($currentDate <= $endDate) {
-            $dayProfit = $this->calculateProfit($currentDate, $currentDate);
+            $dayStart = $currentDate->copy()->startOfDay();
+            $dayEnd = $currentDate->copy()->endOfDay();
+            $dayProfit = $this->calculateProfit($dayStart, $dayEnd);
             $breakdown[] = [
                 'date' => $currentDate->format('Y-m-d'),
                 'day_name' => $currentDate->format('l'),
@@ -176,12 +186,13 @@ class ProfitController extends Controller
         $currentWeek = $startDate->copy();
 
         while ($currentWeek <= $endDate) {
-            $weekEnd = $currentWeek->copy()->endOfWeek();
+            $weekStart = $currentWeek->copy()->startOfWeek()->startOfDay();
+            $weekEnd = $currentWeek->copy()->endOfWeek()->endOfDay();
             if ($weekEnd > $endDate) {
                 $weekEnd = $endDate;
             }
 
-            $weekProfit = $this->calculateProfit($currentWeek, $weekEnd);
+            $weekProfit = $this->calculateProfit($weekStart, $weekEnd);
             $breakdown[] = [
                 'week_start' => $currentWeek->format('Y-m-d'),
                 'week_end' => $weekEnd->format('Y-m-d'),
@@ -207,12 +218,13 @@ class ProfitController extends Controller
         $currentMonth = $startDate->copy();
 
         while ($currentMonth <= $endDate) {
-            $monthEnd = $currentMonth->copy()->endOfMonth();
+            $monthStart = $currentMonth->copy()->startOfMonth()->startOfDay();
+            $monthEnd = $currentMonth->copy()->endOfMonth()->endOfDay();
             if ($monthEnd > $endDate) {
                 $monthEnd = $endDate;
             }
 
-            $monthProfit = $this->calculateProfit($currentMonth, $monthEnd);
+            $monthProfit = $this->calculateProfit($monthStart, $monthEnd);
             $breakdown[] = [
                 'month' => $currentMonth->format('Y-m'),
                 'month_name' => $currentMonth->format('F Y'),

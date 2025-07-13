@@ -1,54 +1,43 @@
 <?php
 
 namespace App\Http\Controllers;
+
+use App\Models\Product;
 use App\Models\Transaction;
-use App\Models\TransactionItem;
-use Illuminate\Support\Facades\DB;
+use App\Models\User;
 use Carbon\Carbon;
-use Illuminate\Http\Request;
 
-class DashboardController extends Controller
+class DashboardController extends BaseManageController
 {
-
     public function index()
     {
+        $totalProducts = Product::count();
+        $totalTransactions = Transaction::count();
+        $totalUsers = User::count();
+        
+        // Get today's transactions
         $today = Carbon::today();
-
-        // Total penjualan hari ini
-        $todaySales = Transaction::whereDate('transaction_date', $today)->sum('total');
-
-        // Total produk terjual hari ini
-        $productsSoldToday = TransactionItem::whereHas('transaction', function ($q) use ($today) {
-            $q->whereDate('transaction_date', $today);
-        })->sum('quantity');
-
-        // Penjualan per bulan (12 bulan terakhir)
-        $monthlySales = Transaction::select(
-            DB::raw("DATE_FORMAT(transaction_date, '%Y-%m') as month"),
-            DB::raw("SUM(total) as total")
-        )
-        ->groupBy('month')
-        ->orderBy('month', 'asc')
-        ->take(12)
-        ->get();
-
-        // Produk terlaris (top 5)
-        $topProducts = TransactionItem::select(
-            'product_id',
-            DB::raw("SUM(quantity) as total_sold")
-        )
-        ->groupBy('product_id')
-        ->orderByDesc('total_sold')
-        ->with('product')
-        ->take(5)
-        ->get();
+        $todayTransactions = Transaction::whereDate('transaction_date', $today)->count();
+        
+        // Get recent transactions
+        $recentTransactions = Transaction::with('items.product')
+            ->latest('transaction_date')
+            ->take(5)
+            ->get();
+        
+        // Get low stock products
+        $lowStockProducts = Product::where('stock', '<=', 10)
+            ->orderBy('stock', 'asc')
+            ->take(5)
+            ->get();
 
         return view('dashboard', compact(
-            'todaySales',
-            'productsSoldToday',
-            'monthlySales',
-            'topProducts'
+            'totalProducts', 
+            'totalTransactions', 
+            'totalUsers', 
+            'todayTransactions',
+            'recentTransactions',
+            'lowStockProducts'
         ));
     }
-
 }

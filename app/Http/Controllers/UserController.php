@@ -3,19 +3,18 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
-use App\Models\Role;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
 
-class UserController extends Controller
+class UserController extends BaseManageController
 {
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        $users = User::with('role')->paginate(10);
+        $users = User::paginate(10);
         return view('users.index', compact('users'));
     }
 
@@ -24,8 +23,7 @@ class UserController extends Controller
      */
     public function create()
     {
-        $roles = Role::where('is_active', true)->get();
-        return view('users.create', compact('roles'));
+        return view('users.create');
     }
 
     /**
@@ -37,14 +35,14 @@ class UserController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8|confirmed',
-            'role_id' => 'nullable|exists:roles,id'
+            'role' => 'nullable|in:admin,cashier,user'
         ]);
 
         User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-            'role_id' => $request->role_id
+            'role' => $request->role ?? 'user'
         ]);
 
         return redirect()->route('users.index')->with('success', 'User berhasil dibuat!');
@@ -55,7 +53,7 @@ class UserController extends Controller
      */
     public function show(string $id)
     {
-        $user = User::with('role')->findOrFail($id);
+        $user = User::findOrFail($id);
         return view('users.show', compact('user'));
     }
 
@@ -65,8 +63,7 @@ class UserController extends Controller
     public function edit(string $id)
     {
         $user = User::findOrFail($id);
-        $roles = Role::where('is_active', true)->get();
-        return view('users.edit', compact('user', 'roles'));
+        return view('users.edit', compact('user'));
     }
 
     /**
@@ -80,13 +77,13 @@ class UserController extends Controller
             'name' => 'required|string|max:255',
             'email' => ['required', 'string', 'email', 'max:255', Rule::unique('users')->ignore($user->id)],
             'password' => 'nullable|string|min:8|confirmed',
-            'role_id' => 'nullable|exists:roles,id'
+            'role' => 'nullable|in:admin,cashier,user'
         ]);
 
         $user->update([
             'name' => $request->name,
             'email' => $request->email,
-            'role_id' => $request->role_id
+            'role' => $request->role ?? $user->role
         ]);
 
         if ($request->filled('password')) {
@@ -102,6 +99,12 @@ class UserController extends Controller
     public function destroy(string $id)
     {
         $user = User::findOrFail($id);
+        
+        // Prevent user from deleting themselves
+        if ($user->id === auth()->id()) {
+            return redirect()->route('users.index')->with('error', 'Anda tidak dapat menghapus akun sendiri!');
+        }
+        
         $user->delete();
 
         return redirect()->route('users.index')->with('success', 'User berhasil dihapus!');

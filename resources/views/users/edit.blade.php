@@ -6,7 +6,9 @@
         <div class="col-md-8">
             <div class="card">
                 <div class="card-header">
-                    <h5 class="mb-0">Edit User: {{ $user->name }}</h5>
+                    <h5 class="mb-0">
+                        <i class="fas fa-user-edit me-2"></i>Edit User: {{ $user->name }}
+                    </h5>
                 </div>
                 <div class="card-body">
                     <form action="{{ route('users.update', $user->id) }}" method="POST">
@@ -43,23 +45,31 @@
                         </div>
 
                         <div class="mb-3">
-                            <label for="role_id" class="form-label">Role</label>
-                            <select class="form-select @error('role_id') is-invalid @enderror" id="role_id" name="role_id">
+                            <label for="role" class="form-label">Role</label>
+                            <select class="form-select @error('role') is-invalid @enderror" id="role" name="role">
                                 <option value="">Pilih Role</option>
-                                @foreach($roles as $role)
-                                    <option value="{{ $role->id }}" {{ old('role_id', $user->role_id) == $role->id ? 'selected' : '' }}>
-                                        {{ $role->name }}
-                                    </option>
-                                @endforeach
+                                <option value="admin" {{ old('role', $user->role) == 'admin' ? 'selected' : '' }}>
+                                    Admin
+                                </option>
+                                <option value="cashier" {{ old('role', $user->role) == 'cashier' ? 'selected' : '' }}>
+                                    Cashier
+                                </option>
+                                <option value="user" {{ old('role', $user->role) == 'user' ? 'selected' : '' }}>
+                                    User
+                                </option>
                             </select>
-                            @error('role_id')
+                            @error('role')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
 
                         <div class="d-flex justify-content-between">
-                            <a href="{{ route('users.index') }}" class="btn btn-secondary">Kembali</a>
-                            <button type="submit" class="btn btn-primary">Update</button>
+                            <a href="{{ route('users.index') }}" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left me-1"></i>Kembali
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save me-1"></i>Update
+                            </button>
                         </div>
                     </form>
                 </div>

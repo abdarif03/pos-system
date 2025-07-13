@@ -9,7 +9,7 @@ use App\Models\TransactionItem;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
-class TransactionController extends Controller
+class TransactionController extends BaseManageController
 {
     public function index()
     {
@@ -96,6 +96,12 @@ class TransactionController extends Controller
     public function markAsPaid($id)
     {
         $transaction = Transaction::findOrFail($id);
+        
+        // Validate that transaction can be marked as paid
+        if ($transaction->status !== Transaction::STATUS_NEW) {
+            return redirect()->back()->with('error', 'Hanya transaksi dengan status baru yang dapat ditandai sebagai lunas');
+        }
+        
         $transaction->update(['status' => Transaction::STATUS_PAID]);
         
         return redirect()->back()->with('success', 'Transaksi berhasil ditandai sebagai lunas');
@@ -107,6 +113,11 @@ class TransactionController extends Controller
     public function cancel($id)
     {
         $transaction = Transaction::with('items.product')->findOrFail($id);
+        
+        // Validate that transaction can be cancelled
+        if ($transaction->status !== Transaction::STATUS_NEW) {
+            return redirect()->back()->with('error', 'Hanya transaksi dengan status baru yang dapat dibatalkan');
+        }
         
         try {
             DB::beginTransaction();
@@ -124,10 +135,10 @@ class TransactionController extends Controller
             DB::commit();
         } catch (\Exception $e) {
             DB::rollBack();
-            return redirect()->back()->with('error', 'Gagal membatalkan transaksi');
+            return redirect()->back()->with('error', 'Gagal membatalkan transaksi: ' . $e->getMessage());
         }
         
-        return redirect()->back()->with('success', 'Transaksi berhasil dibatalkan');
+        return redirect()->back()->with('success', 'Transaksi berhasil dibatalkan dan stok telah dikembalikan');
     }
 
     /**
@@ -136,6 +147,18 @@ class TransactionController extends Controller
     public function markAsExpired($id)
     {
         $transaction = Transaction::findOrFail($id);
+        
+        // Validate that transaction can be marked as expired
+        if ($transaction->status !== Transaction::STATUS_NEW) {
+            return redirect()->back()->with('error', 'Hanya transaksi dengan status baru yang dapat ditandai sebagai kadaluarsa');
+        }
+        
+        // Check if transaction is older than 2 hours
+        $twoHoursAgo = Carbon::now()->subHours(2);
+        if ($transaction->created_at > $twoHoursAgo) {
+            return redirect()->back()->with('error', 'Transaksi belum dapat ditandai sebagai kadaluarsa (minimal 2 jam)');
+        }
+        
         $transaction->update(['status' => Transaction::STATUS_EXPIRED]);
         
         return redirect()->back()->with('success', 'Transaksi berhasil ditandai sebagai kadaluarsa');

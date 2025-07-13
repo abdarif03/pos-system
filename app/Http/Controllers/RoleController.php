@@ -2,16 +2,18 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Role;
 use Illuminate\Http\Request;
 
-class RoleController extends Controller
+class RoleController extends BaseManageController
 {
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        //
+        $roles = Role::withCount('users')->paginate(10);
+        return view('roles.index', compact('roles'));
     }
 
     /**
@@ -19,7 +21,7 @@ class RoleController extends Controller
      */
     public function create()
     {
-        //
+        return view('roles.create');
     }
 
     /**
@@ -27,7 +29,22 @@ class RoleController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'name' => 'required|string|max:255|unique:roles',
+            'description' => 'nullable|string|max:500',
+            'permissions' => 'nullable|array',
+            'permissions.*' => 'string|in:dashboard,products,transactions,reports,users,settings',
+            'is_active' => 'boolean'
+        ]);
+
+        Role::create([
+            'name' => $request->name,
+            'description' => $request->description,
+            'permissions' => $request->permissions ?? [],
+            'is_active' => $request->has('is_active')
+        ]);
+
+        return redirect()->route('roles.index')->with('success', 'Role berhasil dibuat!');
     }
 
     /**
@@ -35,7 +52,8 @@ class RoleController extends Controller
      */
     public function show(string $id)
     {
-        //
+        $role = Role::withCount('users')->findOrFail($id);
+        return view('roles.show', compact('role'));
     }
 
     /**
@@ -43,7 +61,8 @@ class RoleController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        $role = Role::findOrFail($id);
+        return view('roles.edit', compact('role'));
     }
 
     /**
@@ -51,7 +70,24 @@ class RoleController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $role = Role::findOrFail($id);
+        
+        $request->validate([
+            'name' => 'required|string|max:255|unique:roles,name,' . $id,
+            'description' => 'nullable|string|max:500',
+            'permissions' => 'nullable|array',
+            'permissions.*' => 'string|in:dashboard,products,transactions,reports,users,settings',
+            'is_active' => 'boolean'
+        ]);
+
+        $role->update([
+            'name' => $request->name,
+            'description' => $request->description,
+            'permissions' => $request->permissions ?? [],
+            'is_active' => $request->has('is_active')
+        ]);
+
+        return redirect()->route('roles.index')->with('success', 'Role berhasil diperbarui!');
     }
 
     /**
@@ -59,6 +95,15 @@ class RoleController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $role = Role::findOrFail($id);
+        
+        // Check if role has users
+        if ($role->users()->count() > 0) {
+            return redirect()->route('roles.index')->with('error', 'Role tidak dapat dihapus karena masih memiliki user!');
+        }
+        
+        $role->delete();
+
+        return redirect()->route('roles.index')->with('success', 'Role berhasil dihapus!');
     }
 }

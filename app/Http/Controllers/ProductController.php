@@ -6,45 +6,41 @@ use App\Models\Product;
 use App\Models\Category;
 use Illuminate\Http\Request;
 
-class ProductController extends Controller
+class ProductController extends BaseManageController
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        $products = Product::with('category')->orderBy('created_at', 'desc')->get();
+        $products = Product::with('category')->get();
         return view('products.index', compact('products'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
-        $sku = 'PRD-' . str_pad(Product::count() + 1, 4, '0', STR_PAD_LEFT);
-        $categories = Category::where('is_active', true)->get();
-        $params['sku'] = $sku;
-        $params['categories'] = $categories;
-        return view('products.create', $params);
+        $categories = Category::all();
+        return view('products.create', compact('categories'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
         $request->validate([
-            'sku' => 'required|unique:products,sku',
             'name' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'price' => 'required|numeric|min:0',
+            'base_price' => 'required|numeric|min:0',
             'stock' => 'required|integer|min:0',
-            'base_price' => 'required|integer|min:0',
-            'price' => 'required|integer|min:0',
-            'category_id' => 'nullable|exists:categories,id'
+            'category_id' => 'required|exists:categories,id'
         ], [
-            'stock.min' => 'Stok tidak boleh negatif',
-            'base_price.min' => 'Harga beli tidak boleh negatif',
-            'price.min' => 'Harga jual tidak boleh negatif',
+            'name.required' => 'Nama produk wajib diisi',
+            'price.required' => 'Harga jual wajib diisi',
+            'price.numeric' => 'Harga jual harus berupa angka',
+            'price.min' => 'Harga jual minimal 0',
+            'base_price.required' => 'Harga modal wajib diisi',
+            'base_price.numeric' => 'Harga modal harus berupa angka',
+            'base_price.min' => 'Harga modal minimal 0',
+            'stock.required' => 'Stok wajib diisi',
+            'stock.integer' => 'Stok harus berupa angka bulat',
+            'stock.min' => 'Stok minimal 0',
+            'category_id.required' => 'Kategori wajib dipilih',
             'category_id.exists' => 'Kategori tidak valid'
         ]);
 
@@ -53,42 +49,33 @@ class ProductController extends Controller
         return redirect()->route('products.index')->with('success', 'Produk berhasil ditambahkan');
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit(Product $product)
     {
-        $categories = Category::where('is_active', true)->get();
-        $params['sku'] = $product->sku;
-        $params['product'] = $product;
-        $params['categories'] = $categories;
-        return view('products.edit', $params);
+        $categories = Category::all();
+        return view('products.edit', compact('product', 'categories'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, Product $product)
     {
         $request->validate([
-            'sku' => 'required|unique:products,sku,' . $product->id,
             'name' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'price' => 'required|numeric|min:0',
+            'base_price' => 'required|numeric|min:0',
             'stock' => 'required|integer|min:0',
-            'base_price' => 'required|integer|min:0',
-            'price' => 'required|integer|min:0',
-            'category_id' => 'nullable|exists:categories,id'
+            'category_id' => 'required|exists:categories,id'
         ], [
-            'stock.min' => 'Stok tidak boleh negatif',
-            'base_price.min' => 'Harga beli tidak boleh negatif',
-            'price.min' => 'Harga jual tidak boleh negatif',
+            'name.required' => 'Nama produk wajib diisi',
+            'price.required' => 'Harga jual wajib diisi',
+            'price.numeric' => 'Harga jual harus berupa angka',
+            'price.min' => 'Harga jual minimal 0',
+            'base_price.required' => 'Harga modal wajib diisi',
+            'base_price.numeric' => 'Harga modal harus berupa angka',
+            'base_price.min' => 'Harga modal minimal 0',
+            'stock.required' => 'Stok wajib diisi',
+            'stock.integer' => 'Stok harus berupa angka bulat',
+            'stock.min' => 'Stok minimal 0',
+            'category_id.required' => 'Kategori wajib dipilih',
             'category_id.exists' => 'Kategori tidak valid'
         ]);
 
@@ -97,9 +84,6 @@ class ProductController extends Controller
         return redirect()->route('products.index')->with('success', 'Produk berhasil diperbarui');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(Product $product)
     {
         $product->delete();
