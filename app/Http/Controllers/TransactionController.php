@@ -42,6 +42,7 @@ class TransactionController extends Controller
             $transaction = Transaction::create([
                 'transaction_date' => now(),
                 'total' => $total,
+                'status' => Transaction::STATUS_NEW, // Set default status as new
             ]);
     
             for ($i=0; $i < count($items['product_id']); $i++) { 
@@ -89,4 +90,54 @@ class TransactionController extends Controller
         return view('transactions.detail', compact('transaction'));
     }
 
+    /**
+     * Update transaction status to paid
+     */
+    public function markAsPaid($id)
+    {
+        $transaction = Transaction::findOrFail($id);
+        $transaction->update(['status' => Transaction::STATUS_PAID]);
+        
+        return redirect()->back()->with('success', 'Transaksi berhasil ditandai sebagai lunas');
+    }
+
+    /**
+     * Update transaction status to cancelled
+     */
+    public function cancel($id)
+    {
+        $transaction = Transaction::with('items.product')->findOrFail($id);
+        
+        try {
+            DB::beginTransaction();
+            
+            // Restore stock
+            foreach ($transaction->items as $item) {
+                $product = $item->product;
+                $product->stock += $item->quantity;
+                $product->save();
+            }
+            
+            // Update status
+            $transaction->update(['status' => Transaction::STATUS_CANCEL]);
+            
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->back()->with('error', 'Gagal membatalkan transaksi');
+        }
+        
+        return redirect()->back()->with('success', 'Transaksi berhasil dibatalkan');
+    }
+
+    /**
+     * Update transaction status to expired
+     */
+    public function markAsExpired($id)
+    {
+        $transaction = Transaction::findOrFail($id);
+        $transaction->update(['status' => Transaction::STATUS_EXPIRED]);
+        
+        return redirect()->back()->with('success', 'Transaksi berhasil ditandai sebagai kadaluarsa');
+    }
 }

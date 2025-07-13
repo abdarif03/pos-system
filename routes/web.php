@@ -2,6 +2,10 @@
 
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\TransactionController;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\RoleController;
+use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\ProfitController;
 use Illuminate\Support\Facades\Route;
 
 // Route::get('/', function () {
@@ -29,9 +33,28 @@ Route::prefix('transactions')->group(function () {
     Route::get('create', [TransactionController::class, 'create'])->name('transactions.create');
     Route::post('store', [TransactionController::class, 'store'])->name('transactions.store');
     Route::get('detail', [TransactionController::class, 'detail'])->name('transactions.detail');
+    
+    // Status management routes
+    Route::patch('{id}/mark-as-paid', [TransactionController::class, 'markAsPaid'])->name('transactions.mark-as-paid');
+    Route::patch('{id}/cancel', [TransactionController::class, 'cancel'])->name('transactions.cancel');
+    Route::patch('{id}/mark-as-expired', [TransactionController::class, 'markAsExpired'])->name('transactions.mark-as-expired');
 });
 
 Route::prefix('reports')->group(function () {
     Route::get('', [ReportController::class, 'index'])->name('reports.index');
     // Route::get('print', [TransactionController::class, 'print'])->name('reports.print');
 });
+
+// Profit Routes
+Route::prefix('profits')->group(function () {
+    Route::get('', [ProfitController::class, 'index'])->name('profits.index');
+    Route::get('daily', [ProfitController::class, 'daily'])->name('profits.daily');
+    Route::get('weekly', [ProfitController::class, 'weekly'])->name('profits.weekly');
+    Route::get('monthly', [ProfitController::class, 'monthly'])->name('profits.monthly');
+    Route::get('yearly', [ProfitController::class, 'yearly'])->name('profits.yearly');
+});
+
+// Settings Routes
+Route::resource('users', UserController::class);
+Route::resource('roles', RoleController::class);
+Route::resource('categories', CategoryController::class);
