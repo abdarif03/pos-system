@@ -132,6 +132,44 @@
                     </button>
                 </div>
             </div>
+            
+            <!-- PDF Export Filter -->
+            <hr class="my-3">
+            <div class="row">
+                <div class="col-12">
+                    <h6 class="text-muted mb-3">
+                        <i class="fas fa-file-pdf me-2"></i>Export PDF dengan Filter
+                    </h6>
+                </div>
+                <div class="col-md-2 mb-3">
+                    <label for="pdf_start_date" class="form-label">Tanggal Mulai</label>
+                    <input type="date" class="form-control" id="pdf_start_date" name="start_date">
+                </div>
+                <div class="col-md-2 mb-3">
+                    <label for="pdf_end_date" class="form-label">Tanggal Akhir</label>
+                    <input type="date" class="form-control" id="pdf_end_date" name="end_date">
+                </div>
+                <div class="col-md-2 mb-3">
+                    <label for="pdf_status" class="form-label">Status</label>
+                    <select class="form-select" id="pdf_status" name="status">
+                        <option value="">Semua Status</option>
+                        <option value="paid">Lunas</option>
+                        <option value="new">Baru</option>
+                        <option value="cancel">Dibatalkan</option>
+                        <option value="expired">Kadaluarsa</option>
+                    </select>
+                </div>
+                <div class="col-md-3 mb-3 d-flex align-items-end">
+                    <a href="#" class="btn btn-danger w-100" onclick="exportPdfWithFilter()">
+                        <i class="fas fa-file-pdf me-1"></i>Export PDF
+                    </a>
+                </div>
+                <div class="col-md-3 mb-3 d-flex align-items-end">
+                    <a href="{{ route('transactions.export-pdf') }}" class="btn btn-outline-secondary w-100">
+                        <i class="fas fa-download me-1"></i>Export Semua
+                    </a>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -142,6 +180,9 @@
                 <i class="fas fa-list me-2"></i>Daftar Transaksi
             </h6>
             <div class="d-flex gap-2">
+                <a href="{{ route('transactions.export-pdf') }}" class="btn btn-sm btn-outline-danger">
+                    <i class="fas fa-file-pdf me-1"></i>Export PDF
+                </a>
                 <button class="btn btn-sm btn-outline-primary" onclick="exportTransactions()">
                     <i class="fas fa-download me-1"></i>Export
                 </button>
@@ -323,6 +364,32 @@ function exportTransactions() {
 
 function printTransactions() {
     window.print();
+}
+
+function exportPdfWithFilter() {
+    const startDate = document.getElementById('pdf_start_date').value;
+    const endDate = document.getElementById('pdf_end_date').value;
+    const status = document.getElementById('pdf_status').value;
+    
+    let url = '{{ route("transactions.export-pdf") }}?';
+    const params = [];
+    
+    if (startDate) {
+        params.push('start_date=' + startDate);
+    }
+    
+    if (endDate) {
+        params.push('end_date=' + endDate);
+    }
+    
+    if (status) {
+        params.push('status=' + status);
+    }
+    
+    url += params.join('&');
+    
+    // Open in new window/tab
+    window.open(url, '_blank');
 }
 </script>
 @endsection

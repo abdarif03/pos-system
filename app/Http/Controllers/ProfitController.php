@@ -7,6 +7,7 @@ use App\Models\TransactionItem;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class ProfitController extends BaseManageController
 {
@@ -98,6 +99,94 @@ class ProfitController extends BaseManageController
         $monthlyBreakdown = $this->getMonthlyBreakdown($startDate, $endDate);
 
         return view('profits.yearly', compact('profit', 'transactions', 'monthlyBreakdown', 'startDate', 'endDate'));
+    }
+
+    /**
+     * Export profit report to PDF
+     */
+    public function exportPdf(Request $request)
+    {
+        $type = $request->get('type', 'daily');
+        $period = '';
+        
+        switch ($type) {
+            case 'daily':
+                $date = $request->get('date', Carbon::today()->format('Y-m-d'));
+                $selectedDate = Carbon::parse($date);
+                $startDate = $selectedDate->copy()->startOfDay();
+                $endDate = $selectedDate->copy()->endOfDay();
+                $period = $selectedDate->format('d/m/Y');
+                break;
+                
+            case 'weekly':
+                $weekStart = $request->get('week_start', Carbon::now()->startOfWeek()->format('Y-m-d'));
+                $startDate = Carbon::parse($weekStart)->startOfDay();
+                $endDate = $startDate->copy()->endOfWeek()->endOfDay();
+                $period = $startDate->format('d/m/Y') . ' - ' . $endDate->format('d/m/Y');
+                break;
+                
+            case 'monthly':
+                $month = $request->get('month', Carbon::now()->format('Y-m'));
+                $startDate = Carbon::createFromFormat('Y-m', $month)->startOfMonth()->startOfDay();
+                $endDate = $startDate->copy()->endOfMonth()->endOfDay();
+                $period = $startDate->format('F Y');
+                break;
+                
+            case 'yearly':
+                $year = $request->get('year', Carbon::now()->year);
+                $startDate = Carbon::createFromDate($year, 1, 1)->startOfYear()->startOfDay();
+                $endDate = $startDate->copy()->endOfYear()->endOfDay();
+                $period = $year;
+                break;
+                
+            default:
+                $startDate = Carbon::now()->startOfDay();
+                $endDate = Carbon::now()->endOfDay();
+                $period = 'Hari Ini';
+        }
+        
+        $profit = $this->calculateProfit($startDate, $endDate);
+        $transactions = $this->getTransactionsByDate($startDate, $endDate);
+        
+        // Calculate additional statistics
+        $totalRevenue = $profit['revenue'];
+        $totalCost = $profit['cost'];
+        $totalProfit = $profit['profit'];
+        $totalTransactions = $profit['transaction_count'];
+        $totalItems = $transactions->sum(function($transaction) {
+            return $transaction->items->sum('quantity');
+        });
+        $averageTransaction = $totalTransactions > 0 ? $totalRevenue / $totalTransactions : 0;
+        $averageProfit = $totalTransactions > 0 ? $totalProfit / $totalTransactions : 0;
+        
+        // Get daily breakdown for detailed reports
+        $dailyData = [];
+        if (in_array($type, ['weekly', 'monthly', 'yearly'])) {
+            $currentDate = $startDate->copy();
+            while ($currentDate <= $endDate) {
+                $dayStart = $currentDate->copy()->startOfDay();
+                $dayEnd = $currentDate->copy()->endOfDay();
+                $dayProfit = $this->calculateProfit($dayStart, $dayEnd);
+                
+                $dailyData[$currentDate->format('Y-m-d')] = [
+                    'transactions' => $dayProfit['transaction_count'],
+                    'revenue' => $dayProfit['revenue'],
+                    'cost' => $dayProfit['cost'],
+                    'profit' => $dayProfit['profit']
+                ];
+                
+                $currentDate->addDay();
+            }
+        }
+        
+        $pdf = Pdf::loadView('profits.pdf', compact(
+            'profit', 'transactions', 'period', 'type',
+            'totalRevenue', 'totalCost', 'totalProfit',
+            'totalTransactions', 'totalItems', 'averageTransaction', 'averageProfit',
+            'dailyData'
+        ));
+        
+        return $pdf->download('laporan-laba-' . $type . '-' . now()->format('Y-m-d-H-i-s') . '.pdf');
     }
 
     /**
@@ -227,7 +316,7 @@ class ProfitController extends BaseManageController
             $monthProfit = $this->calculateProfit($monthStart, $monthEnd);
             $breakdown[] = [
                 'month' => $currentMonth->format('Y-m'),
-                'month_name' => $currentMonth->format('F Y'),
+                'month_name' => $currentMonth->format('F'),
                 'revenue' => $monthProfit['revenue'],
                 'cost' => $monthProfit['cost'],
                 'profit' => $monthProfit['profit'],

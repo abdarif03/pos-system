@@ -6,9 +6,14 @@
         <div class="col-12">
             <div class="d-flex justify-content-between align-items-center">
                 <h2>Laporan Laba Mingguan</h2>
-                <a href="{{ route('profits.index') }}" class="btn btn-secondary">
-                    <i class="fas fa-arrow-left"></i> Kembali ke Dashboard
-                </a>
+                <div class="d-flex gap-2">
+                    <a href="{{ route('profits.export-pdf', ['type' => 'weekly', 'week_start' => $startDate->format('Y-m-d')]) }}" class="btn btn-outline-danger">
+                        <i class="fas fa-file-pdf me-1"></i>Export PDF
+                    </a>
+                    <a href="{{ route('profits.index') }}" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left"></i> Kembali ke Dashboard
+                    </a>
+                </div>
             </div>
         </div>
     </div>

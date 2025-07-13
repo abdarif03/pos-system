@@ -42,6 +42,7 @@ Route::middleware('auth')->group(function () {
     Route::prefix('transactions')->group(function () {
         Route::get('', [TransactionController::class, 'index'])->name('transactions.index');
         Route::get('detail', [TransactionController::class, 'detail'])->name('transactions.detail');
+        Route::get('export-pdf', [TransactionController::class, 'exportPdf'])->name('transactions.export-pdf');
         
         // Create transaction - Admin and Cashier only
         Route::middleware('role:admin,cashier')->group(function () {
@@ -70,6 +71,7 @@ Route::middleware('auth')->group(function () {
         Route::get('weekly', [ProfitController::class, 'weekly'])->name('profits.weekly');
         Route::get('monthly', [ProfitController::class, 'monthly'])->name('profits.monthly');
         Route::get('yearly', [ProfitController::class, 'yearly'])->name('profits.yearly');
+        Route::get('export-pdf', [ProfitController::class, 'exportPdf'])->name('profits.export-pdf');
     });
 
     // Settings Routes - Admin only

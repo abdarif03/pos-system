@@ -4,7 +4,23 @@
 <div class="container">
     <div class="row mb-4">
         <div class="col-12">
-            <h2 class="mb-3">Dashboard Laporan Laba</h2>
+            <div class="d-flex justify-content-between align-items-center">
+                <h2 class="mb-3">Dashboard Laporan Laba</h2>
+                <div class="d-flex gap-2">
+                    <a href="{{ route('profits.export-pdf', ['type' => 'daily']) }}" class="btn btn-outline-danger">
+                        <i class="fas fa-file-pdf me-1"></i>Export Harian PDF
+                    </a>
+                    <a href="{{ route('profits.export-pdf', ['type' => 'weekly']) }}" class="btn btn-outline-danger">
+                        <i class="fas fa-file-pdf me-1"></i>Export Mingguan PDF
+                    </a>
+                    <a href="{{ route('profits.export-pdf', ['type' => 'monthly']) }}" class="btn btn-outline-danger">
+                        <i class="fas fa-file-pdf me-1"></i>Export Bulanan PDF
+                    </a>
+                    <a href="{{ route('profits.export-pdf', ['type' => 'yearly']) }}" class="btn btn-outline-danger">
+                        <i class="fas fa-file-pdf me-1"></i>Export Tahunan PDF
+                    </a>
+                </div>
+            </div>
         </div>
     </div>
 
