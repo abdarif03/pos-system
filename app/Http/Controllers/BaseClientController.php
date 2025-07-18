@@ -8,7 +8,7 @@ use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
-class BaseManageController extends BaseController
+class BaseClientController extends BaseController
 {
     use AuthorizesRequests, ValidatesRequests;
 

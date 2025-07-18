@@ -7,7 +7,7 @@ use App\Models\Transaction;
 use App\Models\User;
 use Carbon\Carbon;
 
-class DashboardController extends BaseManageController
+class DashboardController extends BaseClientController
 {
     public function index()
     {
