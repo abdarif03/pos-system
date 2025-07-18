@@ -10,7 +10,7 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Barryvdh\DomPDF\Facade\Pdf;
 
-class TransactionController extends BaseManageController
+class TransactionController extends BaseClientController
 {
     public function index()
     {

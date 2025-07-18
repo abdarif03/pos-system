@@ -6,7 +6,7 @@ use App\Models\Product;
 use App\Models\Category;
 use Illuminate\Http\Request;
 
-class ProductController extends BaseManageController
+class ProductController extends BaseClientController
 {
     public function index()
     {

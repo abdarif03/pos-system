@@ -9,7 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Barryvdh\DomPDF\Facade\Pdf;
 
-class ProfitController extends BaseManageController
+class ProfitController extends BaseClientController
 {
     /**
      * Display profit dashboard
