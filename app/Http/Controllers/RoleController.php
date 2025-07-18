@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Role;
 use Illuminate\Http\Request;
 
-class RoleController extends BaseManageController
+class RoleController extends BaseClientController
 {
     /**
      * Display a listing of the resource.
