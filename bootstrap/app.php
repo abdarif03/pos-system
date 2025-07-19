@@ -15,8 +15,11 @@ return Application::configure(basePath: dirname(__DIR__))
             'role' => \App\Http\Middleware\CheckRole::class,
         ]);
         
-        // Configure auth middleware to redirect to login
-        $middleware->redirectGuestsTo('/login');
+        // Remove problematic middleware - use simpler approach
+        // Authentication will be handled by route-level middleware
+        
+        // Configure auth middleware to redirect to login only for client domain
+        // This will be handled in the routes instead of globally
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //

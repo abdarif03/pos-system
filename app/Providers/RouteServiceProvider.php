@@ -38,6 +38,11 @@ class RouteServiceProvider extends ServiceProvider
                 ->domain('client.pos-system.test')
                 ->group(base_path('routes/client.php'));
 
+            // Management System Routes (manage.pos-system.test)
+            Route::middleware('web')
+                ->domain('manage.pos-system.test')
+                ->group(base_path('routes/manage.php'));
+
             // API Routes
             Route::middleware('api')
                 ->prefix('api')
