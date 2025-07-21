@@ -38,6 +38,9 @@
                     <a href="{{ route('manage.users.index') }}" class="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium">
                         <i class="fas fa-user-cog mr-1"></i>Users
                     </a>
+                    <a href="{{ route('manage.packages.index') }}" class="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium">
+                        <i class="fas fa-box-open mr-1"></i>Packages
+                    </a>
                     
                     <!-- User Dropdown -->
                     <div class="relative">

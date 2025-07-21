@@ -67,6 +67,11 @@ Route::middleware('auth')->group(function () {
         Route::post('{payment}/reject', [PaymentController::class, 'reject'])->name('manage.payments.reject');
         Route::get('export', [PaymentController::class, 'export'])->name('manage.payments.export');
     });
+
+    // Package Management
+    Route::resource('packages', \App\Http\Controllers\Manage\PackageController::class, [
+        'as' => 'manage'
+    ]);
 });
 
 // Redirect all other routes to login if not authenticated

@@ -21,6 +21,7 @@ class DatabaseSeeder extends Seeder
             ProductSeeder::class,
             ManageUserSeeder::class,
             ManageDataSeeder::class,
+            \Database\Seeders\PackageSeeder::class,
         ]);
     }
 }
