@@ -22,6 +22,8 @@ class User extends Authenticatable
         'email',
         'password',
         'role',
+        'role_id',
+        'client_id',
     ];
 
     /**
@@ -76,5 +78,21 @@ class User extends Authenticatable
     public function isCashier()
     {
         return $this->hasRole('cashier');
+    }
+
+    /**
+     * Get the client that owns the user
+     */
+    public function client()
+    {
+        return $this->belongsTo(Client::class, 'client_id');
+    }
+
+    /**
+     * Get the role for the user
+     */
+    public function role()
+    {
+        return $this->belongsTo(\App\Models\Role::class, 'role_id');
     }
 }
