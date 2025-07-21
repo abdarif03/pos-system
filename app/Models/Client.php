@@ -39,7 +39,24 @@ class Client extends Model
      */
     public function users()
     {
-        return $this->hasMany(User::class);
+        return $this->hasMany(User::class, 'client_id');
+    }
+
+    /**
+     * Get the user limit based on package_type
+     */
+    public function getUserLimit()
+    {
+        switch ($this->package_type) {
+            case 'basic':
+                return 3;
+            case 'premium':
+                return 10;
+            case 'enterprise':
+                return 50;
+            default:
+                return 1;
+        }
     }
 
     /**

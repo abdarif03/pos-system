@@ -101,12 +101,16 @@ class ClientController extends Controller
     public function show(Client $client)
     {
         try {
-            // Eager load payments with pagination for better performance
-            $client->load(['payments' => function($q) {
-                $q->latest()->take(10);
-            }]);
-
-            return view('manage.clients.show', compact('client'));
+            // Eager load payments and users
+            $client->load([
+                'payments' => function($q) {
+                    $q->latest()->take(10);
+                },
+                'users.role'
+            ]);
+            $userLimit = $client->getUserLimit();
+            $userCount = $client->users()->count();
+            return view('manage.clients.show', compact('client', 'userLimit', 'userCount'));
         } catch (\Exception $e) {
             return redirect()->route('manage.clients.index')
                 ->with('error', 'Error loading client details: ' . $e->getMessage());

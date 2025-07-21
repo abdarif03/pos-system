@@ -45,6 +45,13 @@ Route::middleware('auth')->group(function () {
         Route::delete('destroy/{client}', [ClientController::class, 'destroy'])->name('manage.clients.destroy');
         Route::post('{client}/activate', [ClientController::class, 'activate'])->name('manage.clients.activate');
         Route::post('{client}/deactivate', [ClientController::class, 'deactivate'])->name('manage.clients.deactivate');
+
+        // Nested user management for client
+        Route::get('{client}/users/create', [\App\Http\Controllers\Manage\ClientUserController::class, 'create'])->name('manage.clients.users.create');
+        Route::post('{client}/users/store', [\App\Http\Controllers\Manage\ClientUserController::class, 'store'])->name('manage.clients.users.store');
+        Route::get('{client}/users/{user}/edit', [\App\Http\Controllers\Manage\ClientUserController::class, 'edit'])->name('manage.clients.users.edit');
+        Route::put('{client}/users/{user}/update', [\App\Http\Controllers\Manage\ClientUserController::class, 'update'])->name('manage.clients.users.update');
+        Route::delete('{client}/users/{user}/destroy', [\App\Http\Controllers\Manage\ClientUserController::class, 'destroy'])->name('manage.clients.users.destroy');
     });
     
     // Payment Management

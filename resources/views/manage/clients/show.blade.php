@@ -30,22 +30,22 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Name</label>
-                        <p class="text-gray-900 font-medium">{{ $client->name }}</p>
+                        <p class="text-gray-900 font-medium">{{ $client->name ?? '-' }}</p>
                     </div>
                     
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
-                        <p class="text-gray-900">{{ $client->email }}</p>
+                        <p class="text-gray-900">{{ $client->email ?? '-' }}</p>
                     </div>
                     
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Phone</label>
-                        <p class="text-gray-900">{{ $client->phone }}</p>
+                        <p class="text-gray-900">{{ $client->phone ?? '-' }}</p>
                     </div>
                     
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Company Name</label>
-                        <p class="text-gray-900">{{ $client->company_name }}</p>
+                        <p class="text-gray-900">{{ $client->company_name ?? '-' }}</p>
                     </div>
                     
                     <div>
@@ -54,7 +54,7 @@
                             {{ $client->package_type == 'basic' ? 'bg-blue-100 text-blue-800' : '' }}
                             {{ $client->package_type == 'premium' ? 'bg-yellow-100 text-yellow-800' : '' }}
                             {{ $client->package_type == 'enterprise' ? 'bg-purple-100 text-purple-800' : '' }}">
-                            {{ ucfirst($client->package_type) }}
+                            {{ ucfirst($client->package_type ?? '-') }}
                         </span>
                     </div>
                     
@@ -62,18 +62,18 @@
                         <label class="block text-sm font-medium text-gray-700 mb-1">Status</label>
                         <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full
                             {{ $client->status == 'active' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
-                            {{ ucfirst($client->status) }}
+                            {{ ucfirst($client->status ?? '-') }}
                         </span>
                     </div>
                     
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Registration Date</label>
-                        <p class="text-gray-900">{{ $client->registration_date->format('d/m/Y') }}</p>
+                        <p class="text-gray-900">{{ $client->registration_date ? $client->registration_date->format('d/m/Y') : '-' }}</p>
                     </div>
                     
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Expiry Date</label>
-                        <p class="text-gray-900">{{ $client->expiry_date->format('d/m/Y') }}</p>
+                        <p class="text-gray-900">{{ $client->expiry_date ? $client->expiry_date->format('d/m/Y') : '-' }}</p>
                     </div>
                 </div>
                 
@@ -95,7 +95,7 @@
                     </a>
                 </div>
                 
-                @if($client->payments->count() > 0)
+                @if($client->payments && $client->payments->count() > 0)
                 <div class="overflow-x-auto">
                     <table class="min-w-full divide-y divide-gray-200">
                         <thead class="bg-gray-50">
@@ -111,26 +111,30 @@
                             @foreach($client->payments->take(5) as $payment)
                             <tr class="hover:bg-gray-50">
                                 <td class="px-4 py-3 text-sm text-gray-900">
-                                    {{ $payment->payment_date->format('d/m/Y') }}
+                                    {{ $payment->payment_date ? $payment->payment_date->format('d/m/Y') : '-' }}
                                 </td>
                                 <td class="px-4 py-3 text-sm font-semibold text-gray-900">
-                                    Rp {{ number_format($payment->amount, 0, ',', '.') }}
+                                    Rp {{ $payment->amount !== null ? number_format($payment->amount, 0, ',', '.') : '-' }}
                                 </td>
                                 <td class="px-4 py-3 text-sm text-gray-900">
-                                    {{ ucfirst(str_replace('_', ' ', $payment->payment_method)) }}
+                                    {{ $payment->payment_method ? ucfirst(str_replace('_', ' ', $payment->payment_method)) : '-' }}
                                 </td>
                                 <td class="px-4 py-3">
                                     <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full
                                         {{ $payment->status == 'pending' ? 'bg-yellow-100 text-yellow-800' : '' }}
                                         {{ $payment->status == 'approved' ? 'bg-green-100 text-green-800' : '' }}
                                         {{ $payment->status == 'rejected' ? 'bg-red-100 text-red-800' : '' }}">
-                                        {{ ucfirst($payment->status) }}
+                                        {{ $payment->status ? ucfirst($payment->status) : '-' }}
                                     </span>
                                 </td>
                                 <td class="px-4 py-3 text-sm">
+                                    @if($payment)
                                     <a href="{{ route('manage.payments.show', $payment) }}" class="text-blue-600 hover:text-blue-900">
                                         <i class="fas fa-eye"></i>
                                     </a>
+                                    @else
+                                    <span class="text-gray-400">-</span>
+                                    @endif
                                 </td>
                             </tr>
                             @endforeach
@@ -146,8 +150,77 @@
                     </a>
                 </div>
                 @endif
-                @else
+                @elseif($client->payments)
                 <p class="text-gray-500 text-center py-4">No payment records found</p>
+                @else
+                <p class="text-red-500 text-center py-4">Payment data unavailable</p>
+                @endif
+            </div>
+
+            <!-- Users Section -->
+            <div class="bg-white rounded-lg shadow p-6 mt-8">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-xl font-semibold text-gray-900">Users ({{ $userCount }}/{{ $userLimit }})</h2>
+                    @if($userCount < $userLimit)
+                    <a href="{{ route('manage.clients.users.create', $client) }}" class="bg-blue-600 text-white px-3 py-1 rounded text-sm hover:bg-blue-700 transition-colors">
+                        <i class="fas fa-user-plus mr-1"></i>Add User
+                    </a>
+                    @else
+                    <span class="text-xs text-red-600">User limit reached</span>
+                    @endif
+                </div>
+                @if($client->users && $client->users->count() > 0)
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Name</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Email</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Role</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200">
+                            @foreach($client->users as $user)
+                            <tr class="hover:bg-gray-50">
+                                <td class="px-4 py-3 text-sm text-gray-900">{{ $user->name ?? '-' }}</td>
+                                <td class="px-4 py-3 text-sm text-gray-900">{{ $user->email ?? '-' }}</td>
+                                <td class="px-4 py-3 text-sm">
+                                    @if($user->role && isset($user->role->name))
+                                    <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full
+                                        {{ $user->role->name == 'admin' ? 'bg-red-100 text-red-800' : '' }}
+                                        {{ $user->role->name == 'manager' ? 'bg-yellow-100 text-yellow-800' : '' }}
+                                        {{ $user->role->name == 'cashier' ? 'bg-green-100 text-green-800' : '' }}
+                                        {{ $user->role->name == 'viewer' ? 'bg-gray-100 text-gray-800' : '' }}">
+                                        {{ ucfirst($user->role->name) }}
+                                    </span>
+                                    @else
+                                    <span class="text-gray-500 text-sm">No role</span>
+                                    @endif
+                                </td>
+                                <td class="px-4 py-3 text-sm font-medium">
+                                    <div class="flex space-x-2">
+                                        <a href="{{ route('manage.clients.users.edit', [$client, $user]) }}" class="text-indigo-600 hover:text-indigo-900" title="Edit User">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <form method="POST" action="{{ route('manage.clients.users.destroy', [$client, $user]) }}" class="inline">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="text-red-600 hover:text-red-900" title="Delete User" onclick="return confirm('Delete this user?')">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+                @elseif($client->users)
+                <p class="text-gray-500 text-center py-4">No users found for this client</p>
+                @else
+                <p class="text-red-500 text-center py-4">User data unavailable</p>
                 @endif
             </div>
         </div>
