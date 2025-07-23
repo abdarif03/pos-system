@@ -26,29 +26,53 @@
                 </div>
                 
                 <div class="hidden md:flex items-center space-x-8">
+                    @php $user = Auth::guard('manage')->user(); @endphp
+                    @if($user && $user->hasPermission('dashboard'))
                     <a href="{{ route('manage.dashboard') }}" class="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium">
                         <i class="fas fa-tachometer-alt mr-1"></i>Dashboard
                     </a>
+                    @endif
+                    @if($user && $user->hasPermission('clients'))
                     <a href="{{ route('manage.clients.index') }}" class="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium">
                         <i class="fas fa-users mr-1"></i>Clients
                     </a>
+                    @endif
+                    @if($user && $user->hasPermission('payments'))
                     <a href="{{ route('manage.payments.index') }}" class="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium">
                         <i class="fas fa-money-bill mr-1"></i>Payments
                     </a>
+                    @endif
+                    @if($user && $user->hasPermission('users'))
                     <a href="{{ route('manage.users.index') }}" class="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium">
                         <i class="fas fa-user-cog mr-1"></i>Users
                     </a>
+                    @endif
+                    @if($user && $user->hasPermission('packages'))
                     <a href="{{ route('manage.packages.index') }}" class="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium">
                         <i class="fas fa-box-open mr-1"></i>Packages
                     </a>
+                    @endif
                     
                     <!-- User Dropdown -->
-                    <div class="relative">
-                        <button class="flex items-center text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium">
-                            <i class="fas fa-user mr-1"></i>{{ Auth::user()->name }}
+                    <div class="relative" x-data="{ open: false }">
+                        <button @click="open = !open" class="flex items-center text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium focus:outline-none">
+                            <i class="fas fa-user mr-1"></i>{{ Auth::guard('manage')->user()->name }}
                             <i class="fas fa-chevron-down ml-1"></i>
                         </button>
-                        <div class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50 hidden">
+                        <div x-show="open" @click.away="open = false" class="absolute right-0 mt-2 w-56 bg-white rounded-md shadow-lg py-1 z-50" style="display: none;">
+                            <div class="px-4 py-2 border-b border-gray-100">
+                                <div class="font-semibold text-gray-800">{{ Auth::guard('manage')->user()->name }}</div>
+                                <div class="text-xs text-gray-500">{{ Auth::guard('manage')->user()->email }}</div>
+                                <div class="text-xs text-gray-400 mt-1">Role: {{ ucfirst(Auth::guard('manage')->user()->role) }}</div>
+                            </div>
+                            <a href="{{ route('manage.profile') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                <i class="fas fa-id-badge mr-2"></i>Profile
+                            </a>
+                            @if(in_array(Auth::guard('manage')->user()->role, ['superadmin', 'admin']))
+                            <a href="{{ route('manage.roles.index') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                <i class="fas fa-user-shield mr-2"></i>Access Management
+                            </a>
+                            @endif
                             <form method="POST" action="{{ route('manage.logout') }}">
                                 @csrf
                                 <button type="submit" class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
@@ -88,5 +112,7 @@
     </main>
 
     @stack('scripts')
+    <!-- Add Alpine.js for dropdown -->
+    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
 </body>
 </html> 

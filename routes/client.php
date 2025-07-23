@@ -1,14 +1,14 @@
 <?php
 
-use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\TransactionController;
-use App\Http\Controllers\UserController;
-use App\Http\Controllers\RoleController;
-use App\Http\Controllers\CategoryController;
-use App\Http\Controllers\ProfitController;
+use App\Http\Controllers\Client\DashboardController;
+use App\Http\Controllers\Client\TransactionController;
+use App\Http\Controllers\Client\UserController;
+use App\Http\Controllers\Client\RoleController;
+use App\Http\Controllers\Client\CategoryController;
+use App\Http\Controllers\Client\ProfitController;
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\ProductController;
-use App\Http\Controllers\ReportController;
+use App\Http\Controllers\Client\ProductController;
+use App\Http\Controllers\Client\ReportController;
 use Illuminate\Support\Facades\Route;
 
 // Authentication Routes (Public)

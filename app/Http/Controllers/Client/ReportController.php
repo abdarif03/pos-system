@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Client;
 
 use Illuminate\Http\Request;
 use App\Models\Transaction;
 
-class ReportController extends Controller
+class ReportController extends BaseClientController
 {
     public function index(Request $request)
     {

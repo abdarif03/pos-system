@@ -26,7 +26,7 @@ class AuthController extends Controller
             'password' => 'required',
         ]);
 
-        if (Auth::attempt($credentials)) {
+        if (Auth::guard('manage')->attempt($credentials)) {
             $request->session()->regenerate();
             return redirect()->intended(route('manage.dashboard'));
         }
@@ -41,7 +41,7 @@ class AuthController extends Controller
      */
     public function logout(Request $request)
     {
-        Auth::logout();
+        Auth::guard('manage')->logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
         

@@ -3,8 +3,7 @@
 namespace App\Http\Controllers\Manage;
 
 use App\Http\Controllers\Controller;
-use App\Models\User;
-use App\Models\Role;
+use App\Models\ManageUser;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
@@ -15,7 +14,7 @@ class UserAccessController extends Controller
      */
     public function index()
     {
-        $users = User::with('role')->paginate(15);
+        $users = ManageUser::paginate(15);
         return view('manage.users.index', compact('users'));
     }
 
@@ -24,8 +23,7 @@ class UserAccessController extends Controller
      */
     public function create()
     {
-        $roles = Role::all();
-        return view('manage.users.create', compact('roles'));
+        return view('manage.users.create');
     }
 
     /**
@@ -35,16 +33,16 @@ class UserAccessController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
+            'email' => 'required|string|email|max:255|unique:manage_users',
             'password' => 'required|string|min:8|confirmed',
-            'role_id' => 'required|exists:roles,id',
+            'role' => 'required|in:superadmin,admin,staff',
         ]);
 
-        User::create([
+        ManageUser::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-            'role_id' => $request->role_id,
+            'role' => $request->role,
         ]);
 
         return redirect()->route('manage.users.index')
@@ -54,34 +52,33 @@ class UserAccessController extends Controller
     /**
      * Show the form for editing the specified user
      */
-    public function edit(User $user)
+    public function edit(ManageUser $manage_user)
     {
-        $roles = Role::all();
-        return view('manage.users.edit', compact('user', 'roles'));
+        return view('manage.users.edit', ['user' => $manage_user]);
     }
 
     /**
      * Update the specified user
      */
-    public function update(Request $request, User $user)
+    public function update(Request $request, ManageUser $manage_user)
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
-            'role_id' => 'required|exists:roles,id',
+            'email' => 'required|string|email|max:255|unique:manage_users,email,' . $manage_user->id,
+            'role' => 'required|in:superadmin,admin,staff',
         ]);
 
-        $user->update([
+        $manage_user->update([
             'name' => $request->name,
             'email' => $request->email,
-            'role_id' => $request->role_id,
+            'role' => $request->role,
         ]);
 
         if ($request->filled('password')) {
             $request->validate([
                 'password' => 'string|min:8|confirmed',
             ]);
-            $user->update(['password' => Hash::make($request->password)]);
+            $manage_user->update(['password' => Hash::make($request->password)]);
         }
 
         return redirect()->route('manage.users.index')
@@ -91,9 +88,9 @@ class UserAccessController extends Controller
     /**
      * Remove the specified user
      */
-    public function destroy(User $user)
+    public function destroy(ManageUser $manage_user)
     {
-        $user->delete();
+        $manage_user->delete();
         return redirect()->route('manage.users.index')
             ->with('success', 'User berhasil dihapus.');
     }

@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\ManageUser;
 use Illuminate\Database\Seeder;
 use App\Models\User;
 use App\Models\Role;
@@ -14,52 +15,34 @@ class ManageUserSeeder extends Seeder
      */
     public function run(): void
     {
-        // Get or create admin role
-        $adminRole = Role::firstOrCreate([
-            'name' => 'admin'
-        ], [
-            'description' => 'Full access to all features',
-            'permissions' => json_encode(['*']),
-            'is_active' => true
-        ]);
-
-        // Get or create manager role
-        $managerRole = Role::firstOrCreate([
-            'name' => 'manager'
-        ], [
-            'description' => 'Access to manage clients and payments',
-            'permissions' => json_encode(['clients.*', 'payments.*', 'users.read']),
-            'is_active' => true
-        ]);
-
         // Create admin user
-        User::firstOrCreate([
+        ManageUser::firstOrCreate([
             'email' => 'admin@pos-system.test'
         ], [
             'name' => 'System Administrator',
             'email' => 'admin@pos-system.test',
             'password' => Hash::make('admin123'),
-            'role_id' => $adminRole->id,
+            'role' => 'superadmin',
         ]);
 
         // Create manager user
-        User::firstOrCreate([
+        ManageUser::firstOrCreate([
             'email' => 'manager@pos-system.test'
         ], [
             'name' => 'Client Manager',
             'email' => 'manager@pos-system.test',
             'password' => Hash::make('manager123'),
-            'role_id' => $managerRole->id,
+            'role' => 'admin',
         ]);
 
         // Create supervisor user
-        User::firstOrCreate([
+        ManageUser::firstOrCreate([
             'email' => 'supervisor@pos-system.test'
         ], [
             'name' => 'Payment Supervisor',
             'email' => 'supervisor@pos-system.test',
             'password' => Hash::make('supervisor123'),
-            'role_id' => $managerRole->id,
+            'role' => 'staff',
         ]);
 
         $this->command->info('Manage system users created successfully!');

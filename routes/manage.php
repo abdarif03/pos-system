@@ -6,6 +6,14 @@ use App\Http\Controllers\Manage\ClientController;
 use App\Http\Controllers\Manage\PaymentController;
 use App\Http\Controllers\Manage\AuthController;
 use Illuminate\Support\Facades\Route;
+use App\Models\ManageUser;
+use App\Http\Controllers\Manage\ProfileController;
+use App\Http\Controllers\Manage\RoleAccessController;
+
+// Route model binding for manage_user
+Route::bind('manage_user', function ($value) {
+    return \App\Models\ManageUser::findOrFail($value);
+});
 
 // Authentication Routes for Manage System
 Route::get('/', function () {
@@ -20,7 +28,7 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout'])->name('manage.logout');
 
 // Protected Routes (require authentication)
-Route::middleware('auth')->group(function () {
+Route::middleware('auth:manage')->group(function () {
     // Dashboard
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('manage.dashboard');
     
@@ -29,9 +37,9 @@ Route::middleware('auth')->group(function () {
         Route::get('', [UserAccessController::class, 'index'])->name('manage.users.index');
         Route::get('create', [UserAccessController::class, 'create'])->name('manage.users.create');
         Route::post('store', [UserAccessController::class, 'store'])->name('manage.users.store');
-        Route::get('edit/{user}', [UserAccessController::class, 'edit'])->name('manage.users.edit');
-        Route::put('update/{user}', [UserAccessController::class, 'update'])->name('manage.users.update');
-        Route::delete('destroy/{user}', [UserAccessController::class, 'destroy'])->name('manage.users.destroy');
+        Route::get('edit/{manage_user}', [UserAccessController::class, 'edit'])->name('manage.users.edit');
+        Route::put('update/{manage_user}', [UserAccessController::class, 'update'])->name('manage.users.update');
+        Route::delete('destroy/{manage_user}', [UserAccessController::class, 'destroy'])->name('manage.users.destroy');
     });
     
     // Client Management
@@ -72,6 +80,17 @@ Route::middleware('auth')->group(function () {
     Route::resource('packages', \App\Http\Controllers\Manage\PackageController::class, [
         'as' => 'manage'
     ]);
+
+    // Profile page for logged-in user
+    Route::get('/profile', [ProfileController::class, 'show'])->name('manage.profile');
+    Route::put('/profile', [ProfileController::class, 'update'])->name('manage.profile.update');
+    // Access management (role management)
+    Route::get('/roles', [RoleAccessController::class, 'index'])->name('manage.roles.index');
+    Route::get('/roles/create', [RoleAccessController::class, 'create'])->name('manage.roles.create');
+    Route::post('/roles', [RoleAccessController::class, 'store'])->name('manage.roles.store');
+    Route::get('/roles/{role}/edit', [RoleAccessController::class, 'edit'])->name('manage.roles.edit');
+    Route::put('/roles/{role}', [RoleAccessController::class, 'update'])->name('manage.roles.update');
+    Route::delete('/roles/{role}', [RoleAccessController::class, 'destroy'])->name('manage.roles.destroy');
 });
 
 // Redirect all other routes to login if not authenticated

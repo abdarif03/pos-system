@@ -52,11 +52,10 @@
                         <td class="px-6 py-4 whitespace-nowrap">
                             @if($user->role)
                             <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full
-                                {{ $user->role->name == 'admin' ? 'bg-red-100 text-red-800' : '' }}
-                                {{ $user->role->name == 'manager' ? 'bg-yellow-100 text-yellow-800' : '' }}
-                                {{ $user->role->name == 'cashier' ? 'bg-green-100 text-green-800' : '' }}
-                                {{ $user->role->name == 'viewer' ? 'bg-gray-100 text-gray-800' : '' }}">
-                                {{ ucfirst($user->role->name) }}
+                                {{ $user->role == 'superadmin' ? 'bg-purple-100 text-purple-800' : '' }}
+                                {{ $user->role == 'admin' ? 'bg-red-100 text-red-800' : '' }}
+                                {{ $user->role == 'staff' ? 'bg-green-100 text-green-800' : '' }}">
+                                {{ ucfirst($user->role) }}
                             </span>
                             @else
                             <span class="text-gray-500 text-sm">No role assigned</span>
@@ -129,7 +128,7 @@
                 </div>
                 <div class="ml-4">
                     <p class="text-sm font-medium text-gray-600">Admins</p>
-                    <p class="text-2xl font-semibold text-gray-900">{{ $users->where('role.name', 'admin')->count() }}</p>
+                    <p class="text-2xl font-semibold text-gray-900">{{ $users->where('role', 'admin')->count() }}</p>
                 </div>
             </div>
         </div>
@@ -141,7 +140,7 @@
                 </div>
                 <div class="ml-4">
                     <p class="text-sm font-medium text-gray-600">Managers</p>
-                    <p class="text-2xl font-semibold text-gray-900">{{ $users->where('role.name', 'manager')->count() }}</p>
+                    <p class="text-2xl font-semibold text-gray-900">{{ $users->where('role', 'superadmin')->count() }}</p>
                 </div>
             </div>
         </div>
@@ -153,7 +152,7 @@
                 </div>
                 <div class="ml-4">
                     <p class="text-sm font-medium text-gray-600">Other Roles</p>
-                    <p class="text-2xl font-semibold text-gray-900">{{ $users->whereNotIn('role.name', ['admin', 'manager'])->count() }}</p>
+                    <p class="text-2xl font-semibold text-gray-900">{{ $users->whereNotIn('role', ['admin', 'superadmin'])->count() }}</p>
                 </div>
             </div>
         </div>
