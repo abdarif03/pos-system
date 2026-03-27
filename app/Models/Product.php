@@ -18,4 +18,11 @@ class Product extends Model
     {
         return $this->belongsTo(Category::class);
     }
+
+    public static function generateSku()
+    {
+        $lastProduct = self::orderBy('id', 'desc')->first();
+        $lastNumber = $lastProduct ? (int) substr($lastProduct->sku, -4) : 0;
+        return 'PRD-' . str_pad($lastNumber + 1, 3, '0', STR_PAD_LEFT);
+    }
 }

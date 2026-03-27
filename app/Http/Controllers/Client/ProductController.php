@@ -17,7 +17,8 @@ class ProductController extends BaseClientController
     public function create()
     {
         $categories = Category::all();
-        return view('products.create', compact('categories'));
+        $sku = Product::generateSku();
+        return view('products.create', compact('categories', 'sku'));
     }
 
     public function store(Request $request)
