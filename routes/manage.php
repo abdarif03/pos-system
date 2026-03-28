@@ -1,14 +1,14 @@
 <?php
 
-use App\Http\Controllers\Manage\DashboardController;
-use App\Http\Controllers\Manage\UserAccessController;
-use App\Http\Controllers\Manage\ClientController;
-use App\Http\Controllers\Manage\PaymentController;
 use App\Http\Controllers\Manage\AuthController;
-use Illuminate\Support\Facades\Route;
-use App\Models\ManageUser;
+use App\Http\Controllers\Manage\ClientController;
+use App\Http\Controllers\Manage\DashboardController;
+use App\Http\Controllers\Manage\PaymentController;
 use App\Http\Controllers\Manage\ProfileController;
 use App\Http\Controllers\Manage\RoleAccessController;
+use App\Http\Controllers\Manage\SubscriptionOverviewController;
+use App\Http\Controllers\Manage\UserAccessController;
+use Illuminate\Support\Facades\Route;
 
 // Route model binding for manage_user
 Route::bind('manage_user', function ($value) {
@@ -20,6 +20,7 @@ Route::get('/', function () {
     if (\Illuminate\Support\Facades\Auth::check()) {
         return redirect()->route('manage.dashboard');
     }
+
     return redirect()->route('manage.login');
 });
 
@@ -31,7 +32,7 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('manage.logout')
 Route::middleware('auth:manage')->group(function () {
     // Dashboard
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('manage.dashboard');
-    
+
     // User Access Management
     Route::prefix('users')->group(function () {
         Route::get('', [UserAccessController::class, 'index'])->name('manage.users.index');
@@ -41,12 +42,12 @@ Route::middleware('auth:manage')->group(function () {
         Route::put('update/{manage_user}', [UserAccessController::class, 'update'])->name('manage.users.update');
         Route::delete('destroy/{manage_user}', [UserAccessController::class, 'destroy'])->name('manage.users.destroy');
     });
-    
+
+    Route::get('/subscriptions', [SubscriptionOverviewController::class, 'index'])->name('manage.subscriptions.index');
+
     // Client Management
     Route::prefix('clients')->group(function () {
         Route::get('', [ClientController::class, 'index'])->name('manage.clients.index');
-        Route::get('create', [ClientController::class, 'create'])->name('manage.clients.create');
-        Route::post('store', [ClientController::class, 'store'])->name('manage.clients.store');
         Route::get('show/{client}', [ClientController::class, 'show'])->name('manage.clients.show');
         Route::get('edit/{client}', [ClientController::class, 'edit'])->name('manage.clients.edit');
         Route::put('update/{client}', [ClientController::class, 'update'])->name('manage.clients.update');
@@ -61,7 +62,7 @@ Route::middleware('auth:manage')->group(function () {
         Route::put('{client}/users/{user}/update', [\App\Http\Controllers\Manage\ClientUserController::class, 'update'])->name('manage.clients.users.update');
         Route::delete('{client}/users/{user}/destroy', [\App\Http\Controllers\Manage\ClientUserController::class, 'destroy'])->name('manage.clients.users.destroy');
     });
-    
+
     // Payment Management
     Route::prefix('payments')->group(function () {
         Route::get('', [PaymentController::class, 'index'])->name('manage.payments.index');
@@ -78,7 +79,7 @@ Route::middleware('auth:manage')->group(function () {
 
     // Package Management
     Route::resource('packages', \App\Http\Controllers\Manage\PackageController::class, [
-        'as' => 'manage'
+        'as' => 'manage',
     ]);
 
     // Profile page for logged-in user
@@ -95,8 +96,8 @@ Route::middleware('auth:manage')->group(function () {
 
 // Redirect all other routes to login if not authenticated
 Route::fallback(function () {
-    if (!\Illuminate\Support\Facades\Auth::check()) {
+    if (! \Illuminate\Support\Facades\Auth::check()) {
         return redirect()->route('manage.login');
     }
     abort(404);
-}); 
+});

@@ -11,14 +11,19 @@
                     <a class="nav-link" href="{{ route('dashboard') }}">Dashboard</a>
                 </li>
 
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ route('service-fees.index') }}">Biaya Layanan</a>
+                </li>
+
                 <!-- Products - Available for admin and cashier -->
-                @if(Auth::user()->hasRole('admin'))
+                @if(($canAccessPosFeatures ?? false) && Auth::user()->hasRole('admin'))
                 <li class="nav-item">
                     <a class="nav-link" href="{{ route('products.index') }}">Produk</a>
                 </li>
                 @endif
 
                 <!-- Transactions - Available for all roles -->
+                @if($canAccessPosFeatures ?? false)
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="transaksiDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                         Transaksi
@@ -32,9 +37,10 @@
                         <li><a class="dropdown-item" href="{{ route('reports.index') }}">Laporan Transaksi</a></li>
                     </ul>
                 </li>
+                @endif
 
                 <!-- Profit Reports - Available for admin and cashier -->
-                @if(Auth::user()->hasRole('admin'))
+                @if(($canAccessPosFeatures ?? false) && Auth::user()->hasRole('admin'))
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="labaDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                         Laporan Laba
@@ -50,7 +56,7 @@
                 @endif
 
                 <!-- Settings - Available only for admin -->
-                @if(Auth::user()->hasRole('admin'))
+                @if(($canAccessPosFeatures ?? false) && Auth::user()->hasRole('admin'))
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="pengaturanDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                         Pengaturan

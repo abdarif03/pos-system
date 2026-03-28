@@ -29,9 +29,9 @@
             <h1 class="text-3xl font-bold text-gray-900">Client Management</h1>
             <p class="text-gray-600">Kelola data client yang terdaftar</p>
         </div>
-        <a href="{{ route('manage.clients.create') }}" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors">
-            <i class="fas fa-plus mr-2"></i>Add New Client
-        </a>
+        <p class="text-sm text-gray-600 max-w-xl text-right">
+            Client baru mendaftar melalui <a href="{{ config('marketing.url') }}/pricing" class="text-blue-600 hover:underline" target="_blank" rel="noopener">halaman harga</a> di website publik.
+        </p>
     </div>
 
     <!-- Search and Filter -->

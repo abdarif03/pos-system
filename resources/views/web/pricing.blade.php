@@ -24,15 +24,11 @@
             <div class="bg-white border-2 border-gray-200 rounded-lg p-8 hover:shadow-lg transition duration-300">
                 <div class="text-center mb-8">
                     <h3 class="text-2xl font-bold text-gray-900 mb-4">Basic</h3>
-                    <div class="text-4xl font-bold text-blue-600 mb-2">Rp 299K</div>
+                    <div class="text-4xl font-bold text-blue-600 mb-2">Rp 100K</div>
                     <div class="text-gray-600">per bulan</div>
                 </div>
                 
                 <ul class="space-y-4 mb-8">
-                    <li class="flex items-center">
-                        <i class="fas fa-check text-green-500 mr-3"></i>
-                        <span>Hingga 1 outlet</span>
-                    </li>
                     <li class="flex items-center">
                         <i class="fas fa-check text-green-500 mr-3"></i>
                         <span>3 user aktif</span>
@@ -55,7 +51,7 @@
                     </li>
                 </ul>
                 
-                <a href="{{ route('contact') }}" class="w-full bg-gray-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-gray-700 transition duration-300 text-center block">
+                <a href="{{ route('client.register', ['package' => 'basic']) }}" class="w-full bg-gray-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-gray-700 transition duration-300 text-center block">
                     Pilih Paket
                 </a>
             </div>
@@ -67,16 +63,12 @@
                 </div>
                 
                 <div class="text-center mb-8">
-                    <h3 class="text-2xl font-bold text-gray-900 mb-4">Professional</h3>
-                    <div class="text-4xl font-bold text-blue-600 mb-2">Rp 599K</div>
-                    <div class="text-gray-600">per bulan</div>
+                    <h3 class="text-2xl font-bold text-gray-900 mb-4">Premium</h3>
+                    <div class="text-4xl font-bold text-blue-600 mb-2">Rp 250K</div>
+                    <div class="text-gray-600">per 3 bulan</div>
                 </div>
                 
                 <ul class="space-y-4 mb-8">
-                    <li class="flex items-center">
-                        <i class="fas fa-check text-green-500 mr-3"></i>
-                        <span>Hingga 5 outlet</span>
-                    </li>
                     <li class="flex items-center">
                         <i class="fas fa-check text-green-500 mr-3"></i>
                         <span>10 user aktif</span>
@@ -103,7 +95,7 @@
                     </li>
                 </ul>
                 
-                <a href="{{ route('contact') }}" class="w-full bg-blue-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-blue-700 transition duration-300 text-center block">
+                <a href="{{ route('client.register', ['package' => 'premium']) }}" class="w-full bg-blue-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-blue-700 transition duration-300 text-center block">
                     Pilih Paket
                 </a>
             </div>
@@ -112,15 +104,11 @@
             <div class="bg-white border-2 border-gray-200 rounded-lg p-8 hover:shadow-lg transition duration-300">
                 <div class="text-center mb-8">
                     <h3 class="text-2xl font-bold text-gray-900 mb-4">Enterprise</h3>
-                    <div class="text-4xl font-bold text-blue-600 mb-2">Rp 1.299K</div>
-                    <div class="text-gray-600">per bulan</div>
+                    <div class="text-4xl font-bold text-blue-600 mb-2">Rp 750K</div>
+                    <div class="text-gray-600">per 12 bulan</div>
                 </div>
                 
                 <ul class="space-y-4 mb-8">
-                    <li class="flex items-center">
-                        <i class="fas fa-check text-green-500 mr-3"></i>
-                        <span>Outlet unlimited</span>
-                    </li>
                     <li class="flex items-center">
                         <i class="fas fa-check text-green-500 mr-3"></i>
                         <span>User unlimited</span>
@@ -147,7 +135,7 @@
                     </li>
                 </ul>
                 
-                <a href="{{ route('contact') }}" class="w-full bg-gray-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-gray-700 transition duration-300 text-center block">
+                <a href="{{ route('client.register', ['package' => 'enterprise']) }}" class="w-full bg-gray-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-gray-700 transition duration-300 text-center block">
                     Pilih Paket
                 </a>
             </div>

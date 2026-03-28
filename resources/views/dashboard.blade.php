@@ -19,6 +19,15 @@
         </div>
     </div>
 
+    @unless($canAccessPosFeatures ?? false)
+    <div class="alert alert-warning border-0 shadow-sm mb-4" role="alert">
+        <i class="fas fa-lock me-2"></i>
+        <strong>Akses terbatas.</strong> Selesaikan pembayaran biaya layanan untuk menggunakan produk, transaksi, laporan, dan pengaturan user.
+        <a href="{{ route('service-fees.index') }}" class="alert-link fw-bold ms-1">Buka Biaya Layanan</a>
+    </div>
+    @endunless
+
+    @if($canAccessPosFeatures ?? false)
     <!-- Statistics Cards -->
     <div class="row mb-4">
         <div class="col-xl-3 col-lg-6 col-md-6 mb-4">
@@ -258,6 +267,22 @@
             </div>
         </div>
     </div>
+    @else
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <div class="card shadow text-center py-5">
+                <div class="card-body">
+                    <i class="fas fa-file-invoice-dollar fa-4x text-warning mb-4"></i>
+                    <h4 class="mb-3">Aktifkan akses POS</h4>
+                    <p class="text-muted mb-4">Menu transaksi, produk, dan kelola user akan tersedia setelah status langganan Anda aktif (biaya layanan lunas / dalam masa berlaku).</p>
+                    <a href="{{ route('service-fees.index') }}" class="btn btn-primary btn-lg">
+                        <i class="fas fa-arrow-right me-2"></i>Lihat Biaya Layanan
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    @endif
 </div>
 
 <style>

@@ -36,6 +36,9 @@
                     <a href="{{ route('manage.clients.index') }}" class="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium">
                         <i class="fas fa-users mr-1"></i>Clients
                     </a>
+                    <a href="{{ route('manage.subscriptions.index') }}" class="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium">
+                        <i class="fas fa-calendar-check mr-1"></i>Status Langganan
+                    </a>
                     @endif
                     @if($user && $user->hasPermission('payments'))
                     <a href="{{ route('manage.payments.index') }}" class="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium">

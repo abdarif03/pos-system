@@ -9,21 +9,33 @@ class Payment extends Model
 {
     use HasFactory;
 
+    public const TYPE_MANUAL = 'manual';
+
+    public const TYPE_SUBSCRIPTION_RENEWAL = 'subscription_renewal';
+
     protected $fillable = [
         'client_id',
+        'type',
+        'package_id',
+        'billing_period_end',
         'amount',
         'payment_method',
         'status',
         'payment_date',
         'due_date',
         'description',
-        'reference_number'
+        'reference_number',
     ];
 
     protected $casts = [
         'payment_date' => 'date',
         'due_date' => 'date',
+        'billing_period_end' => 'date',
         'amount' => 'decimal:2',
+    ];
+
+    protected $attributes = [
+        'type' => self::TYPE_MANUAL,
     ];
 
     /**
@@ -32,6 +44,21 @@ class Payment extends Model
     public function client()
     {
         return $this->belongsTo(Client::class);
+    }
+
+    public function package()
+    {
+        return $this->belongsTo(Package::class);
+    }
+
+    public function scopeSubscriptionRenewal($query)
+    {
+        return $query->where('type', self::TYPE_SUBSCRIPTION_RENEWAL);
+    }
+
+    public function isPaid(): bool
+    {
+        return $this->status === 'approved';
     }
 
     /**
@@ -57,4 +84,4 @@ class Payment extends Model
     {
         return $query->where('status', 'rejected');
     }
-} 
+}
