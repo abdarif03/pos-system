@@ -47,7 +47,7 @@
             <div class="card bg-primary text-white">
                 <div class="card-body text-center">
                     <h6>Total Pendapatan</h6>
-                    <h4>Rp {{ number_format($profit['revenue'], 0, ',', '.') }}</h4>
+                    <h4>{{ format_idr($profit['revenue']) }}</h4>
                 </div>
             </div>
         </div>
@@ -55,7 +55,7 @@
             <div class="card bg-danger text-white">
                 <div class="card-body text-center">
                     <h6>Total Biaya</h6>
-                    <h4>Rp {{ number_format($profit['cost'], 0, ',', '.') }}</h4>
+                    <h4>{{ format_idr($profit['cost']) }}</h4>
                 </div>
             </div>
         </div>
@@ -63,7 +63,7 @@
             <div class="card bg-success text-white">
                 <div class="card-body text-center">
                     <h6>Total Laba</h6>
-                    <h4>Rp {{ number_format($profit['profit'], 0, ',', '.') }}</h4>
+                    <h4>{{ format_idr($profit['profit']) }}</h4>
                 </div>
             </div>
         </div>
@@ -71,7 +71,7 @@
             <div class="card bg-info text-white">
                 <div class="card-body text-center">
                     <h6>Margin Laba</h6>
-                    <h4>{{ number_format($profit['margin'], 1) }}%</h4>
+                    <h4>{{ format_id_number($profit['margin'], 1) }}%</h4>
                 </div>
             </div>
         </div>
@@ -105,10 +105,10 @@
                                             <span class="badge bg-secondary">Minggu {{ $week['week_number'] }}</span>
                                         </td>
                                         <td>{{ \Carbon\Carbon::parse($week['week_start'])->format('d/m') }} - {{ \Carbon\Carbon::parse($week['week_end'])->format('d/m/Y') }}</td>
-                                        <td>Rp {{ number_format($week['revenue'], 0, ',', '.') }}</td>
-                                        <td>Rp {{ number_format($week['cost'], 0, ',', '.') }}</td>
-                                        <td class="text-success">Rp {{ number_format($week['profit'], 0, ',', '.') }}</td>
-                                        <td>{{ number_format($week['margin'], 1) }}%</td>
+                                        <td>{{ format_idr($week['revenue']) }}</td>
+                                        <td>{{ format_idr($week['cost']) }}</td>
+                                        <td class="text-success">{{ format_idr($week['profit']) }}</td>
+                                        <td>{{ format_id_number($week['margin'], 1) }}%</td>
                                         <td>
                                             <span class="badge bg-primary">{{ $week['transaction_count'] }}</span>
                                         </td>
@@ -160,8 +160,8 @@
                                             <td>{{ $transaction->created_at->format('d/m/Y') }}</td>
                                             <td>{{ $transaction->created_at->format('H:i') }}</td>
                                             <td>{{ $totalItems }}</td>
-                                            <td>Rp {{ number_format($totalRevenue, 0, ',', '.') }}</td>
-                                            <td class="text-success">Rp {{ number_format($totalProfit, 0, ',', '.') }}</td>
+                                            <td>{{ format_idr($totalRevenue) }}</td>
+                                            <td class="text-success">{{ format_idr($totalProfit) }}</td>
                                         </tr>
                                     @endforeach
                                 </tbody>

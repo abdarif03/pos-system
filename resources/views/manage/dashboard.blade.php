@@ -46,7 +46,7 @@
                 </div>
                 <div class="ml-4">
                     <p class="text-sm font-medium text-gray-600">Total Revenue</p>
-                    <p class="text-2xl font-semibold text-gray-900">Rp {{ number_format($totalRevenue, 0, ',', '.') }}</p>
+                    <p class="text-2xl font-semibold text-gray-900">{{ format_idr($totalRevenue) }}</p>
                 </div>
             </div>
         </div>
@@ -96,7 +96,7 @@
                         <p class="text-sm text-gray-600">{{ $payment->payment_method }} - {{ $payment->status }}</p>
                     </div>
                     <div class="text-right">
-                        <p class="font-semibold text-gray-900">Rp {{ number_format($payment->amount, 0, ',', '.') }}</p>
+                        <p class="font-semibold text-gray-900">{{ format_idr($payment->amount) }}</p>
                         <p class="text-sm text-gray-600">{{ $payment->payment_date->format('d/m/Y') }}</p>
                     </div>
                 </div>

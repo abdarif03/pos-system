@@ -197,14 +197,14 @@
                                     <span class="badge bg-danger">Habis</span>
                                 @endif
                             </td>
-                            <td class="text-muted">Rp {{ number_format($product->base_price, 0, ',', '.') }}</td>
-                            <td class="fw-bold text-success">Rp {{ number_format($product->price, 0, ',', '.') }}</td>
+                            <td class="text-muted">{{ format_idr($product->base_price) }}</td>
+                            <td class="fw-bold text-success">{{ format_idr($product->price) }}</td>
                             <td>
                                 @php
                                     $margin = $product->base_price > 0 ? (($product->price - $product->base_price) / $product->base_price) * 100 : 0;
                                 @endphp
                                 <span class="badge {{ $margin > 20 ? 'bg-success' : ($margin > 10 ? 'bg-warning' : 'bg-danger') }}">
-                                    {{ number_format($margin, 1) }}%
+                                    {{ format_id_number($margin, 1) }}%
                                 </span>
                             </td>
                             <td>

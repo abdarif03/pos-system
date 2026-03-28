@@ -26,7 +26,7 @@
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Amount</label>
-                    <p class="text-gray-900 font-semibold">Rp {{ number_format($payment->amount, 0, ',', '.') }}</p>
+                    <p class="text-gray-900 font-semibold">{{ format_idr($payment->amount) }}</p>
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Payment Method</label>

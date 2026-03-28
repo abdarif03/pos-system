@@ -76,7 +76,7 @@
                                         <tr>
                                             <td>{{ $loop->iteration }}</td>
                                             <td>{{ $product->name }}</td>
-                                            <td>Rp {{ number_format($product->price, 0, ',', '.') }}</td>
+                                            <td>{{ format_idr($product->price) }}</td>
                                             <td>{{ $product->stock }}</td>
                                             <td>
                                                 @if($product->stock > 0)

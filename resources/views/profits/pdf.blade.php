@@ -138,37 +138,37 @@
     <div class="info-section">
         <div class="info-row">
             <span class="info-label">Total Pendapatan:</span>
-            <span class="info-value">Rp {{ number_format($totalRevenue, 0, ',', '.') }}</span>
+            <span class="info-value">{{ format_idr($totalRevenue) }}</span>
         </div>
         <div class="info-row">
             <span class="info-label">Total Harga Pokok:</span>
-            <span class="info-value">Rp {{ number_format($totalCost, 0, ',', '.') }}</span>
+            <span class="info-value">{{ format_idr($totalCost) }}</span>
         </div>
         <div class="info-row">
             <span class="info-label">Total Laba:</span>
-            <span class="info-value profit-{{ $totalProfit >= 0 ? 'positive' : 'negative' }}">Rp {{ number_format($totalProfit, 0, ',', '.') }}</span>
+            <span class="info-value profit-{{ $totalProfit >= 0 ? 'positive' : 'negative' }}">{{ format_idr($totalProfit) }}</span>
         </div>
         <div class="info-row">
             <span class="info-label">Margin Laba:</span>
-            <span class="info-value">{{ $totalRevenue > 0 ? number_format(($totalProfit / $totalRevenue) * 100, 2) : '0' }}%</span>
+            <span class="info-value">{{ $totalRevenue > 0 ? format_id_number(($totalProfit / $totalRevenue) * 100, 2) : '0' }}%</span>
         </div>
     </div>
 
     <div class="stats-grid">
         <div class="stat-card">
-            <div class="stat-value">{{ $totalTransactions }}</div>
+            <div class="stat-value">{{ format_id_number($totalTransactions) }}</div>
             <div class="stat-label">Total Transaksi</div>
         </div>
         <div class="stat-card">
-            <div class="stat-value">{{ $totalItems }}</div>
+            <div class="stat-value">{{ format_id_number($totalItems) }}</div>
             <div class="stat-label">Total Item</div>
         </div>
         <div class="stat-card">
-            <div class="stat-value">Rp {{ number_format($averageTransaction, 0, ',', '.') }}</div>
+            <div class="stat-value">{{ format_idr($averageTransaction) }}</div>
             <div class="stat-label">Rata-rata per Transaksi</div>
         </div>
         <div class="stat-card">
-            <div class="stat-value">Rp {{ number_format($averageProfit, 0, ',', '.') }}</div>
+            <div class="stat-value">{{ format_idr($averageProfit) }}</div>
             <div class="stat-label">Rata-rata Laba per Transaksi</div>
         </div>
     </div>
@@ -191,23 +191,23 @@
         <tbody>
             @foreach($transactions as $index => $transaction)
             @php
-                $revenue = $transaction->total_amount;
+                $revenue = $transaction->total;
                 $cost = $transaction->items->sum(function($item) {
-                    return $item->quantity * $item->product->cost_price;
+                    return $item->quantity * $item->product->base_price;
                 });
                 $profit = $revenue - $cost;
                 $margin = $revenue > 0 ? ($profit / $revenue) * 100 : 0;
             @endphp
             <tr>
                 <td class="text-center">{{ $index + 1 }}</td>
-                <td>{{ $transaction->transaction_id }}</td>
+                <td>{{ $transaction->id }}</td>
                 <td>{{ $transaction->transaction_date ? $transaction->transaction_date->format('d/m/Y H:i') : '-' }}</td>
                 <td>{{ $transaction->customer_name ?? 'Walk-in Customer' }}</td>
                 <td class="text-center">{{ $transaction->items->count() }}</td>
-                <td class="text-right">Rp {{ number_format($revenue, 0, ',', '.') }}</td>
-                <td class="text-right">Rp {{ number_format($cost, 0, ',', '.') }}</td>
-                <td class="text-right profit-{{ $profit >= 0 ? 'positive' : 'negative' }}">Rp {{ number_format($profit, 0, ',', '.') }}</td>
-                <td class="text-right">{{ number_format($margin, 2) }}%</td>
+                <td class="text-right">{{ format_idr($revenue) }}</td>
+                <td class="text-right">{{ format_idr($cost) }}</td>
+                <td class="text-right profit-{{ $profit >= 0 ? 'positive' : 'negative' }}">{{ format_idr($profit) }}</td>
+                <td class="text-right">{{ format_id_number($margin, 2) }}%</td>
             </tr>
             @endforeach
         </tbody>
@@ -232,10 +232,10 @@
             <tr>
                 <td>{{ \Carbon\Carbon::parse($date)->format('d/m/Y') }}</td>
                 <td class="text-center">{{ $data['transactions'] }}</td>
-                <td class="text-right">Rp {{ number_format($data['revenue'], 0, ',', '.') }}</td>
-                <td class="text-right">Rp {{ number_format($data['cost'], 0, ',', '.') }}</td>
-                <td class="text-right profit-{{ $data['profit'] >= 0 ? 'positive' : 'negative' }}">Rp {{ number_format($data['profit'], 0, ',', '.') }}</td>
-                <td class="text-right">{{ $data['revenue'] > 0 ? number_format(($data['profit'] / $data['revenue']) * 100, 2) : '0' }}%</td>
+                <td class="text-right">{{ format_idr($data['revenue']) }}</td>
+                <td class="text-right">{{ format_idr($data['cost']) }}</td>
+                <td class="text-right profit-{{ $data['profit'] >= 0 ? 'positive' : 'negative' }}">{{ format_idr($data['profit']) }}</td>
+                <td class="text-right">{{ $data['revenue'] > 0 ? format_id_number(($data['profit'] / $data['revenue']) * 100, 2) : '0' }}%</td>
             </tr>
             @endforeach
         </tbody>
@@ -245,19 +245,19 @@
     <div class="summary">
         <div class="summary-row">
             <strong>Total Pendapatan:</strong>
-            <strong>Rp {{ number_format($totalRevenue, 0, ',', '.') }}</strong>
+            <strong>{{ format_idr($totalRevenue) }}</strong>
         </div>
         <div class="summary-row">
             <strong>Total Harga Pokok:</strong>
-            <strong>Rp {{ number_format($totalCost, 0, ',', '.') }}</strong>
+            <strong>{{ format_idr($totalCost) }}</strong>
         </div>
         <div class="summary-row">
             <strong>Total Laba:</strong>
-            <strong class="profit-{{ $totalProfit >= 0 ? 'positive' : 'negative' }}">Rp {{ number_format($totalProfit, 0, ',', '.') }}</strong>
+            <strong class="profit-{{ $totalProfit >= 0 ? 'positive' : 'negative' }}">{{ format_idr($totalProfit) }}</strong>
         </div>
         <div class="summary-row">
             <strong>Margin Laba Keseluruhan:</strong>
-            <strong>{{ $totalRevenue > 0 ? number_format(($totalProfit / $totalRevenue) * 100, 2) : '0' }}%</strong>
+            <strong>{{ $totalRevenue > 0 ? format_id_number(($totalProfit / $totalRevenue) * 100, 2) : '0' }}%</strong>
         </div>
     </div>
 

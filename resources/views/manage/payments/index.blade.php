@@ -110,7 +110,7 @@
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap">
                             <div class="text-sm font-semibold text-gray-900">
-                                Rp {{ number_format($payment->amount, 0, ',', '.') }}
+                                {{ format_idr($payment->amount) }}
                             </div>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap">

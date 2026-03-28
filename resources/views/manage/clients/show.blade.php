@@ -114,7 +114,7 @@
                                     {{ $payment->payment_date ? $payment->payment_date->format('d/m/Y') : '-' }}
                                 </td>
                                 <td class="px-4 py-3 text-sm font-semibold text-gray-900">
-                                    Rp {{ $payment->amount !== null ? number_format($payment->amount, 0, ',', '.') : '-' }}
+                                    {{ $payment->amount !== null ? format_idr($payment->amount) : '-' }}
                                 </td>
                                 <td class="px-4 py-3 text-sm text-gray-900">
                                     {{ $payment->payment_method ? ucfirst(str_replace('_', ' ', $payment->payment_method)) : '-' }}
@@ -279,7 +279,7 @@
                     <div class="flex justify-between items-center">
                         <span class="text-sm text-gray-600">Total Amount</span>
                         <span class="font-semibold text-gray-900">
-                            Rp {{ number_format($client->payments->sum('amount'), 0, ',', '.') }}
+                            {{ format_idr($client->payments->sum('amount')) }}
                         </span>
                     </div>
                     

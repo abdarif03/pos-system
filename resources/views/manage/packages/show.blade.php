@@ -28,7 +28,7 @@
         </div>
         <div class="mb-4">
             <label class="block text-sm font-medium text-gray-700 mb-1">Price</label>
-            <div>Rp {{ number_format($package->price, 0, ',', '.') }}</div>
+            <div>{{ format_idr($package->price) }}</div>
         </div>
         <div class="mb-4">
             <label class="block text-sm font-medium text-gray-700 mb-1">Duration</label>

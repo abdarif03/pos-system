@@ -32,15 +32,15 @@
                     <div class="d-flex justify-content-between">
                         <div>
                             <h6 class="card-title">Laba Hari Ini</h6>
-                            <h4 class="mb-0">Rp {{ number_format($data['daily']['profit'], 0, ',', '.') }}</h4>
-                            <small>Margin: {{ number_format($data['daily']['margin'], 1) }}%</small>
+                            <h4 class="mb-0">{{ format_idr($data['daily']['profit']) }}</h4>
+                            <small>Margin: {{ format_id_number($data['daily']['margin'], 1) }}%</small>
                         </div>
                         <div class="align-self-center">
                             <i class="fas fa-calendar-day fa-2x"></i>
                         </div>
                     </div>
                     <div class="mt-2">
-                        <small>Pendapatan: Rp {{ number_format($data['daily']['revenue'], 0, ',', '.') }}</small><br>
+                        <small>Pendapatan: {{ format_idr($data['daily']['revenue']) }}</small><br>
                         <small>Transaksi: {{ $data['daily']['transaction_count'] }}</small>
                     </div>
                 </div>
@@ -53,15 +53,15 @@
                     <div class="d-flex justify-content-between">
                         <div>
                             <h6 class="card-title">Laba Minggu Ini</h6>
-                            <h4 class="mb-0">Rp {{ number_format($data['weekly']['profit'], 0, ',', '.') }}</h4>
-                            <small>Margin: {{ number_format($data['weekly']['margin'], 1) }}%</small>
+                            <h4 class="mb-0">{{ format_idr($data['weekly']['profit']) }}</h4>
+                            <small>Margin: {{ format_id_number($data['weekly']['margin'], 1) }}%</small>
                         </div>
                         <div class="align-self-center">
                             <i class="fas fa-calendar-week fa-2x"></i>
                         </div>
                     </div>
                     <div class="mt-2">
-                        <small>Pendapatan: Rp {{ number_format($data['weekly']['revenue'], 0, ',', '.') }}</small><br>
+                        <small>Pendapatan: {{ format_idr($data['weekly']['revenue']) }}</small><br>
                         <small>Transaksi: {{ $data['weekly']['transaction_count'] }}</small>
                     </div>
                 </div>
@@ -74,15 +74,15 @@
                     <div class="d-flex justify-content-between">
                         <div>
                             <h6 class="card-title">Laba Bulan Ini</h6>
-                            <h4 class="mb-0">Rp {{ number_format($data['monthly']['profit'], 0, ',', '.') }}</h4>
-                            <small>Margin: {{ number_format($data['monthly']['margin'], 1) }}%</small>
+                            <h4 class="mb-0">{{ format_idr($data['monthly']['profit']) }}</h4>
+                            <small>Margin: {{ format_id_number($data['monthly']['margin'], 1) }}%</small>
                         </div>
                         <div class="align-self-center">
                             <i class="fas fa-calendar-alt fa-2x"></i>
                         </div>
                     </div>
                     <div class="mt-2">
-                        <small>Pendapatan: Rp {{ number_format($data['monthly']['revenue'], 0, ',', '.') }}</small><br>
+                        <small>Pendapatan: {{ format_idr($data['monthly']['revenue']) }}</small><br>
                         <small>Transaksi: {{ $data['monthly']['transaction_count'] }}</small>
                     </div>
                 </div>
@@ -95,15 +95,15 @@
                     <div class="d-flex justify-content-between">
                         <div>
                             <h6 class="card-title">Laba Tahun Ini</h6>
-                            <h4 class="mb-0">Rp {{ number_format($data['yearly']['profit'], 0, ',', '.') }}</h4>
-                            <small>Margin: {{ number_format($data['yearly']['margin'], 1) }}%</small>
+                            <h4 class="mb-0">{{ format_idr($data['yearly']['profit']) }}</h4>
+                            <small>Margin: {{ format_id_number($data['yearly']['margin'], 1) }}%</small>
                         </div>
                         <div class="align-self-center">
                             <i class="fas fa-calendar fa-2x"></i>
                         </div>
                     </div>
                     <div class="mt-2">
-                        <small>Pendapatan: Rp {{ number_format($data['yearly']['revenue'], 0, ',', '.') }}</small><br>
+                        <small>Pendapatan: {{ format_idr($data['yearly']['revenue']) }}</small><br>
                         <small>Transaksi: {{ $data['yearly']['transaction_count'] }}</small>
                     </div>
                 </div>

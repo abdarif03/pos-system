@@ -16,7 +16,7 @@ class TransactionController extends BaseClientController
     {
         $transactions = Transaction::with('items.product')->latest()->get()
         ->map(function ($transaction) {
-            $transaction->t_total = 'Rp '. number_format($transaction->total, 0, ',', '.');
+            $transaction->t_total = format_idr($transaction->total);
             $transaction->t_date = Carbon::parse($transaction->transaction_date)->format('d M Y H:i:s');
             return $transaction;
         });
@@ -78,12 +78,12 @@ class TransactionController extends BaseClientController
             return redirect()->route('transactions.index')->with('error', 'Transaksi tidak ditemukan');
         }
 
-        $transaction->t_total = 'Rp '. number_format($transaction->total, 0, ',', '.');
+        $transaction->t_total = format_idr($transaction->total);
         $transaction->t_date = Carbon::parse($transaction->transaction_date)->format('d M Y H:i:s');
         $transaction->t_items = $transaction->items->map(function ($item) {
             $item->product_name = $item->product->name;
-            $item->t_price = 'Rp '. number_format($item->price, 0, ',', '.');
-            $item->t_subtotal = 'Rp '. number_format($item->subtotal, 0, ',', '.');
+            $item->t_price = format_idr($item->price);
+            $item->t_subtotal = format_idr($item->subtotal);
             return $item;
         });
 

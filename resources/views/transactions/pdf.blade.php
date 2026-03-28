@@ -111,7 +111,7 @@
         </div>
         <div class="info-row">
             <span class="info-label">Total Pendapatan:</span>
-            <span class="info-value">Rp {{ number_format($transactions->sum('total_amount'), 0, ',', '.') }}</span>
+            <span class="info-value">{{ format_idr($transactions->sum('total')) }}</span>
         </div>
         <div class="info-row">
             <span class="info-label">Periode:</span>
@@ -135,7 +135,7 @@
             @forelse($transactions as $index => $transaction)
             <tr>
                 <td class="text-center">{{ $index + 1 }}</td>
-                <td>{{ $transaction->transaction_id }}</td>
+                <td>{{ $transaction->id }}</td>
                 <td>{{ $transaction->transaction_date ? $transaction->transaction_date->format('d/m/Y H:i') : '-' }}</td>
                 <td>{{ $transaction->customer_name ?? 'Walk-in Customer' }}</td>
                 <td class="text-center">
@@ -157,7 +157,7 @@
                     @endswitch
                 </td>
                 <td class="text-center">{{ $transaction->items->count() }}</td>
-                <td class="text-right">Rp {{ number_format($transaction->total_amount, 0, ',', '.') }}</td>
+                <td class="text-right">{{ format_idr($transaction->total) }}</td>
             </tr>
             @empty
             <tr>
@@ -174,11 +174,11 @@
         </div>
         <div class="summary-row">
             <strong>Total Pendapatan:</strong>
-            <strong>Rp {{ number_format($transactions->sum('total_amount'), 0, ',', '.') }}</strong>
+            <strong>{{ format_idr($transactions->sum('total')) }}</strong>
         </div>
         <div class="summary-row">
             <strong>Rata-rata per Transaksi:</strong>
-            <strong>Rp {{ $transactions->count() > 0 ? number_format($transactions->sum('total_amount') / $transactions->count(), 0, ',', '.') : '0' }}</strong>
+            <strong>{{ $transactions->count() > 0 ? format_idr($transactions->sum('total') / $transactions->count()) : format_idr(0) }}</strong>
         </div>
     </div>
 

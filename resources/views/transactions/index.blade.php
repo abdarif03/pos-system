@@ -80,7 +80,7 @@
                                 Total Pendapatan
                             </div>
                             <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                Rp {{ number_format($transactions->where('status', 'paid')->sum('total'), 0, ',', '.') }}
+                                {{ format_idr($transactions->where('status', 'paid')->sum('total')) }}
                             </div>
                         </div>
                         <div class="col-auto">
@@ -214,7 +214,7 @@
                                 <div class="fw-bold">{{ \Carbon\Carbon::parse($transaction->transaction_date)->format('d/m/Y') }}</div>
                                 <small class="text-muted">{{ \Carbon\Carbon::parse($transaction->transaction_date)->format('H:i') }}</small>
                             </td>
-                            <td class="fw-bold text-success">Rp {{ number_format($transaction->total, 0, ',', '.') }}</td>
+                            <td class="fw-bold text-success">{{ $transaction->t_total }}</td>
                             <td>
                                 @if($transaction->status === 'paid')
                                     <span class="badge bg-success">

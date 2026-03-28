@@ -29,7 +29,7 @@
                             <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
                                 Total Produk
                             </div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ number_format($totalProducts) }}</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ format_id_number($totalProducts) }}</div>
                         </div>
                         <div class="col-auto">
                             <i class="fas fa-box fa-2x text-gray-300"></i>
@@ -47,7 +47,7 @@
                             <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
                                 Total Transaksi
                             </div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ number_format($totalTransactions) }}</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ format_id_number($totalTransactions) }}</div>
                         </div>
                         <div class="col-auto">
                             <i class="fas fa-shopping-cart fa-2x text-gray-300"></i>
@@ -65,7 +65,7 @@
                             <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
                                 Transaksi Hari Ini
                             </div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ number_format($todayTransactions) }}</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ format_id_number($todayTransactions) }}</div>
                         </div>
                         <div class="col-auto">
                             <i class="fas fa-calendar-day fa-2x text-gray-300"></i>
@@ -83,7 +83,7 @@
                             <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
                                 Total User
                             </div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ number_format($totalUsers) }}</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ format_id_number($totalUsers) }}</div>
                         </div>
                         <div class="col-auto">
                             <i class="fas fa-users fa-2x text-gray-300"></i>
@@ -128,7 +128,7 @@
                                             <div class="fw-bold">{{ \Carbon\Carbon::parse($transaction->transaction_date)->format('d/m/Y') }}</div>
                                             <small class="text-muted">{{ \Carbon\Carbon::parse($transaction->transaction_date)->format('H:i') }}</small>
                                         </td>
-                                        <td class="fw-bold text-success">Rp {{ number_format($transaction->total, 0, ',', '.') }}</td>
+                                        <td class="fw-bold text-success">{{ format_idr($transaction->total) }}</td>
                                         <td>
                                             @if($transaction->status === 'paid')
                                                 <span class="badge bg-success"><i class="fas fa-check me-1"></i>Lunas</span>

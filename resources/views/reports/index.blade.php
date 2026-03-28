@@ -15,7 +15,7 @@
     </div>
 </form>
 
-<h5>Total Pendapatan: Rp {{ number_format($total_income, 0, ',', '.') }}</h5>
+<h5>Total Pendapatan: {{ format_idr($total_income) }}</h5>
 
 <table class="table">
     <thead>
@@ -28,7 +28,7 @@
         @foreach ($transactions as $trx)
         <tr>
             <td>{{ $trx->transaction_date }}</td>
-            <td>Rp {{ number_format($trx->total, 0, ',', '.') }}</td>
+            <td>{{ format_idr($trx->total) }}</td>
         </tr>
         @endforeach
     </tbody>

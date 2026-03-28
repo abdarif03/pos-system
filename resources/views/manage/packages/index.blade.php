@@ -30,7 +30,7 @@
                 @forelse($packages as $package)
                 <tr>
                     <td class="px-4 py-2">{{ $package->name }}</td>
-                    <td class="px-4 py-2">Rp {{ number_format($package->price, 0, ',', '.') }}</td>
+                    <td class="px-4 py-2">{{ format_idr($package->price) }}</td>
                     <td class="px-4 py-2">{{ $package->duration_months }} month(s)</td>
                     <td class="px-4 py-2">
                         <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full {{ $package->is_active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
